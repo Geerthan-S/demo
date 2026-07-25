@@ -2,7 +2,8 @@ import { Hero } from "@/components/sections/Hero";
 import { Projects } from "@/components/sections/Projects";
 import { ProjectDelivery } from "@/components/home/ProjectDelivery";
 import { Services } from "@/components/sections/Services";
-import { TrustSystems } from "@/components/sections/TrustSystems";
+import { TrustSystems, trustMetrics } from "@/components/sections/TrustSystems";
+import { HeroStatsStrip } from "@/components/sections/HeroStatsStrip";
 import { TrustedByStrip } from "@/components/enterprise-proof";
 import { SiteContentSections } from "@/components/site-content-sections";
 import { ContactCTA } from "@/components/sections/ContactCTA";
@@ -45,6 +46,10 @@ export default async function HomePage() {
           eyebrow="INDUSTRIAL • COMMERCIAL • INFRASTRUCTURE"
           title="From Land|Development|to Large-Scale|Infrastructure|Execution."
           description="Dockside Constructions delivers earthworks, industrial infrastructure, road construction, site development and project management services across India with engineering precision, safety compliance and reliable execution."
+          shortDescription="Engineering infrastructure built with precision, safety and reliability."
+          trustBadges={["Safety Compliant", "Pan India", "Industrial Experts"]}
+          statsSlot={<HeroStatsStrip metrics={trustMetrics} />}
+          mobileFirstLayout
 
           primaryLabel="VIEW PROJECTS"
           primaryHref="/projects"

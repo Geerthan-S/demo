@@ -36,18 +36,6 @@ const fillVariants: Variants = {
   }),
 };
 
-const fillVerticalVariants: Variants = {
-  hidden: { scaleY: 0 },
-  visible: (index: number) => ({
-    scaleY: 1,
-    transition: {
-      delay: 0.35 + index * 0.09,
-      duration: 0.58,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  }),
-};
-
 export function DeliveryStep({
   number,
   title,
@@ -70,14 +58,7 @@ export function DeliveryStep({
         variants={fillVariants}
       />
 
-      {/* Vertical timeline tracks (visible on mobile) */}
-      <div className="delivery-step__track-v" aria-hidden="true" />
-      <motion.div
-        className="delivery-step__track-v-fill"
-        aria-hidden="true"
-        custom={index}
-        variants={fillVerticalVariants}
-      />
+      {/* Mobile uses one continuous rail (DeliveryRail) instead of per-step segments */}
 
       {/* Timeline dot replaced with trustable icon */}
       <motion.div

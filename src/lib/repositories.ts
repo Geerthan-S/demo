@@ -373,8 +373,8 @@ const seedEquipmentFallback: EquipmentItem[] = [
   },
   {
     id: "equip-6", name: "Water Tankers", slug: "water-tankers",
-    imageUrl: "https://images.unsplash.com/photo-1549419163-5eb71630def2?auto=format&fit=crop&w=1800&q=80",
-    gallery: ["https://images.unsplash.com/photo-1549419163-5eb71630def2"],
+    imageUrl: "/home-reference/industry-utilities.jpg",
+    gallery: ["/home-reference/industry-utilities.jpg"],
     quantity: 12, capacity: "10,000L - 15,000L",
     description: "Water tankers for dust suppression, compaction support and general site maintenance operations.",
     detailedDescription: "High-capacity fluid transports regulating site atmospherics through active dust suppression protocols.",

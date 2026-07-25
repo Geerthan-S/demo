@@ -31,21 +31,21 @@ export function QualityKPIStrip() {
     };
 
     const itemVariants: Variants = {
-        hidden: { opacity: 0, scale: 0.9 },
+        hidden: { opacity: 0, y: 10 },
         visible: {
             opacity: 1,
-            scale: 1,
-            transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }
+            y: 0,
+            transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
         }
     };
 
     return (
-        <section className="bg-[#38161C] border-y border-[#4a1d25]">
+        <section className="bg-[#2D1217] border-y border-[#4a1d25]">
             <motion.div
                 className="max-w-[1400px] mx-auto w-full flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-[#4a1d25]"
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
+                viewport={{ once: true, amount: 0.2 }}
                 variants={containerVariants}
             >
                 {metrics.map((metric, index) => {
@@ -55,17 +55,17 @@ export function QualityKPIStrip() {
                         <motion.div
                             key={index}
                             variants={itemVariants}
-                            className="flex-1 flex items-center justify-center gap-6 py-10 px-8 transition-colors hover:bg-[#401a20]"
+                            className="flex-1 flex items-center justify-start sm:justify-center gap-5 py-7 px-6 md:py-9 md:px-8 transition-colors hover:bg-[#38161c]"
                         >
-                            <div className="flex-shrink-0 text-[#E8CDD1]">
-                                <Icon className="w-8 h-8" strokeWidth={1.5} />
+                            <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-[#E8CDD1]">
+                                <Icon className="w-6 h-6 text-[#E8CDD1]" strokeWidth={1.8} />
                             </div>
 
                             <div className="flex flex-col">
-                                <span className="font-display text-4xl md:text-[42px] font-extrabold text-white tracking-tight leading-none mb-1">
+                                <span className="font-display text-3xl md:text-[38px] font-black text-white tracking-tight leading-none mb-1">
                                     {metric.value}
                                 </span>
-                                <span className="font-mono text-[11px] font-bold text-[#D8C3C6] tracking-[0.15em] uppercase">
+                                <span className="font-mono text-[10.5px] md:text-[11px] font-bold text-[#D8C3C6] tracking-[0.12em] uppercase">
                                     {metric.label}
                                 </span>
                             </div>

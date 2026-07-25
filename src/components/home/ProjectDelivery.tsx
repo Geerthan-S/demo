@@ -9,6 +9,8 @@ import {
   ShoppingCart,
   TowerControl,
 } from "lucide-react";
+import { useRef } from "react";
+import { DeliveryRail } from "@/components/home/DeliveryRail";
 import { DeliveryStep } from "@/components/home/DeliveryStep";
 import { RevealText } from "@/components/motion/reveal";
 
@@ -85,22 +87,6 @@ const subtitleVariants: Variants = {
   },
 };
 
-const lineGrow: Variants = {
-  hidden: { scaleX: 0 },
-  visible: {
-    scaleX: 1,
-    transition: { delay: 0.35, duration: 1.4, ease: [0.22, 1, 0.36, 1] },
-  },
-};
-
-const lineGrowY: Variants = {
-  hidden: { scaleY: 0 },
-  visible: {
-    scaleY: 1,
-    transition: { delay: 0.35, duration: 1.4, ease: [0.22, 1, 0.36, 1] },
-  },
-};
-
 const staggerContainer: Variants = {
   hidden: {},
   visible: {
@@ -124,6 +110,7 @@ const pillVariants: Variants = {
 export function ProjectDelivery() {
   const reduceMotion = useReducedMotion();
   const initial = reduceMotion ? false : "hidden";
+  const stageRef = useRef<HTMLDivElement>(null);
 
   return (
     <motion.section
@@ -178,7 +165,8 @@ export function ProjectDelivery() {
         </motion.p>
 
         {/* ── timeline + steps ── */}
-        <div className="project-delivery__stage">
+        <div className="project-delivery__stage" ref={stageRef}>
+          <DeliveryRail stageRef={stageRef} />
 
           <motion.ol
             className="project-delivery__steps"

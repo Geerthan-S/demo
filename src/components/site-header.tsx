@@ -9,6 +9,7 @@ import {
   Phone,
 } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
+import { NavContactTicker } from "@/components/nav-contact-ticker";
 
 const navItems = [
   ["Home", "/"],
@@ -104,6 +105,8 @@ export function SiteHeader() {
   return (
     <header className={`industrial-nav ${scrolled ? "is-scrolled" : ""} ${qualitySafetyHeader ? "quality-safety-nav" : ""}`}>
       <div className="industrial-nav__utility" aria-label="Dockside contact details">
+        {/* Phones show this rotating strip instead of the static links below */}
+        <NavContactTicker />
         <a href="tel:+918925922737">
           <Phone aria-hidden="true" />
           +91 89259 22737
@@ -136,6 +139,15 @@ export function SiteHeader() {
             );
           })}
         </nav>
+        {/* Phone-only: construction enquiries come by call, so keep it one tap
+            away even after the utility strip scrolls out of view. */}
+        <a
+          className="industrial-nav__call"
+          href="tel:+918925922737"
+          aria-label="Call Dockside Constructions"
+        >
+          <Phone aria-hidden="true" />
+        </a>
         <button
           className={`industrial-menu ${open ? "is-open" : ""}`}
           type="button"

@@ -17,8 +17,8 @@ export function Logo({ className = "" }: { className?: string }) {
         />
       </div>
       <div className="industrial-wordmark__type flex flex-col">
-        <span className="font-display text-xl font-bold uppercase tracking-wider text-[#8B3F4A]">DOCKSIDE</span>
-        <span className="text-[9px] font-semibold uppercase tracking-widest text-[#8B3F4A]">CONSTRUCTIONS PRIVATE LIMITED</span>
+        <span className="font-display text-xl font-extrabold uppercase tracking-wider text-[#8B3F4A]">DOCKSIDE</span>
+        <span className="whitespace-nowrap text-[9px] font-semibold uppercase tracking-widest text-[#8B3F4A]">CONSTRUCTIONS PRIVATE LIMITED</span>
       </div>
     </Link>
   );

@@ -219,51 +219,132 @@ const qualityMetrics: HeroMetric[] = [
 
 function QualitySafetyHero() {
   return (
-    <div className="relative">
-      <Hero
-        eyebrow="Certified Excellence"
-        badgeIcon={ShieldCheck}
-        title="Quality &|Safety First.|Always."
-        description="Every project delivered through internationally recognized standards, rigorous multi-stage inspections, certified material testing, and an unwavering commitment to zero-incident operations."
-        slides={[
-          {
-            src: "/hero/quality_safety.png",
-            alt: "Dockside engineers reviewing quality and safety work at a construction site",
-          },
-        ]}
-        primaryLabel="VIEW PROJECTS"
-        primaryHref="/projects"
-        secondaryLabel="CONTACT US"
-        secondaryHref="/contact"
-      >
-        <div className="pt-2">
-          <h4 className="font-mono text-[10.5px] font-bold uppercase tracking-[0.2em] text-[#7A3340] mb-4">
-            Safety &amp; Compliance Highlights
-          </h4>
-          <div className="flex flex-wrap gap-4 text-gray-500 font-mono text-[11px]">
-            <div className="flex items-center gap-1">
-              <Award className="w-4 h-4 text-[#7A3340]" strokeWidth={2} />
-              <span>ISO 9001:2015</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <ShieldCheck className="w-4 h-4 text-[#7A3340]" strokeWidth={2} />
-              <span>ISO 45001:2018</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <ClipboardCheck className="w-4 h-4 text-[#7A3340]" strokeWidth={2} />
-              <span>Safety Plan Certified</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <FlaskConical className="w-4 h-4 text-[#7A3340]" strokeWidth={2} />
-              <span>On-Site Laboratory</span>
-            </div>
+    <>
+      <style>{`
+        .qs-hero-wrapper {
+          position: relative;
+        }
+
+        .qs-metrics-desktop {
+          display: block;
+        }
+        .qs-image-mobile {
+          display: none;
+        }
+
+        @media (max-width: 760px) {
+          .qs-metrics-desktop {
+            display: none !important;
+          }
+
+          .qs-image-mobile {
+            display: block !important;
+            position: relative;
+            width: 100%;
+            margin: 0;
+          }
+
+          .qs-image-mobile__img {
+            display: block;
+            width: 100%;
+            height: 56vw;
+            min-height: 200px;
+            max-height: 300px;
+            object-fit: cover;
+            object-position: center 50%;
+          }
+
+          .qs-stats-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(139, 58, 74, 0.12);
+            padding: 10px 12px;
+            gap: 0;
+          }
+
+          .qs-stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            padding: 6px 8px;
+          }
+
+          .qs-stat-item + .qs-stat-item {
+            border-left: 1px solid rgba(139, 58, 74, 0.12);
+          }
+
+          .qs-stat-value {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 900;
+            line-height: 1;
+            color: #8B2332;
+            text-align: center;
+          }
+
+          .qs-stat-label {
+            margin-top: 3px;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #6A6B72;
+            text-align: center;
+          }
+        }
+      `}</style>
+
+      <div className="qs-hero-wrapper">
+        <Hero
+          eyebrow="Certified Excellence"
+          badgeIcon={ShieldCheck}
+          title="Quality &|Safety First.|Always."
+          description="Every project delivered through internationally recognized standards, rigorous multi-stage inspections, certified material testing, and an unwavering commitment to zero-incident operations."
+          shortDescription="ISO 9001 & 45001 certified — multi-stage quality controls, zero-incident safety commitments."
+          slides={[
+            {
+              src: "/hero/quality_safety.png",
+              alt: "Dockside engineers reviewing quality and safety work at a construction site",
+            },
+          ]}
+          primaryLabel="VIEW PROJECTS"
+          primaryHref="/projects"
+          secondaryLabel="CONTACT US"
+          secondaryHref="/contact"
+        />
+
+        <div className="qs-metrics-desktop absolute bottom-[90px] left-0 right-0 z-50 home-metrics-card pointer-events-none">
+          <HeroMetrics metrics={qualityMetrics} />
+        </div>
+
+        <div className="qs-image-mobile">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/hero/quality_safety.png"
+            alt="Dockside quality and safety team"
+            className="qs-image-mobile__img"
+          />
+          <div className="qs-stats-overlay">
+            {qualityMetrics.map((metric) => (
+              <div key={metric.label} className="qs-stat-item">
+                <div className="qs-stat-value">{metric.value}</div>
+                <div className="qs-stat-label">{metric.label}</div>
+              </div>
+            ))}
           </div>
         </div>
-      </Hero>
-      <div className="absolute bottom-[90px] left-0 right-0 z-50 home-metrics-card pointer-events-none">
-        <HeroMetrics metrics={qualityMetrics} />
       </div>
-    </div>
+    </>
   );
 }
 

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Building2, Landmark, Pickaxe, Users } from "lucide-react";
+import { ArrowRight, Check, ShieldCheck, Building2, Landmark, Pickaxe, Users } from "lucide-react";
 import { MagneticButton } from "../ui/magnetic-button";
 
 type HeroProps = {
@@ -11,6 +11,17 @@ type HeroProps = {
   badgeIcon?: React.ElementType;
   title?: string;
   description?: string;
+  /** Shown instead of `description` on phones, where the long copy goes unread. */
+  shortDescription?: string;
+  /** Three short proof points rendered under the CTAs on phones. */
+  trustBadges?: string[];
+  /** Stats block placed inside the hero flow on phones. */
+  statsSlot?: React.ReactNode;
+  /**
+   * Opt in to the image-first mobile hero. Only the homepage uses it; the other
+   * heroes keep the original stacked layout.
+   */
+  mobileFirstLayout?: boolean;
 
   primaryLabel?: string;
   primaryHref?: string;
@@ -36,6 +47,8 @@ const defaultHeroSlides = [
 ];
 
 const SLIDE_DURATION = 4000;
+/** Phones hold each slide longer so the hero reads as stable rather than busy. */
+const SLIDE_DURATION_MOBILE = 8000;
 const TRANSITION_DURATION = 1.6;
 
 export function Hero({
@@ -43,6 +56,10 @@ export function Hero({
   badgeIcon: BadgeIcon = ShieldCheck,
   title = "From Land|Development|to Large-Scale|Infrastructure|Execution.",
   description = "Dockside Constructions delivers earthworks, industrial infrastructure, road construction, site development and project management services across India with engineering precision, safety compliance and reliable execution.",
+  shortDescription,
+  trustBadges,
+  statsSlot,
+  mobileFirstLayout = false,
 
   primaryLabel,
   primaryHref,
@@ -54,8 +71,17 @@ export function Hero({
   const root = useRef<HTMLElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [prevIndex, setPrevIndex] = useState(0);
+  const [isPhone, setIsPhone] = useState(false);
   const indexRef = useRef(0);
   const titleLines = title.split("|").map((line) => line.trim()).filter(Boolean);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 767px)");
+    const sync = () => setIsPhone(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
 
   useEffect(() => {
     if (!root.current) return;
@@ -83,12 +109,18 @@ export function Hero({
       setPrevIndex(prev);
       setCurrentIndex(next);
       indexRef.current = next;
-    }, SLIDE_DURATION);
+    }, isPhone ? SLIDE_DURATION_MOBILE : SLIDE_DURATION);
     return () => clearInterval(interval);
-  }, [slides.length]);
+  }, [slides.length, isPhone]);
 
   return (
-    <section ref={root} className="home-hero-reference qs-reference-hero relative isolate bg-white">
+    <section
+      ref={root}
+      // The id carries the mobile overrides: the site's base styles are written
+      // with a very high specificity prefix that class selectors cannot beat.
+      id={mobileFirstLayout ? "home-hero" : undefined}
+      className="home-hero-reference qs-reference-hero relative isolate bg-white"
+    >
       <style>{`
        
 
@@ -596,6 +628,335 @@ export function Hero({
           .qs-reference-hero__body {
             font-size: clamp(1rem, 3.8vw, 1.15rem) !important;
           }
+
+          /* ── Non-homepage page heroes (Equipment Fleet, Projects, etc.) ── */
+          .qs-reference-hero:not(#home-hero) {
+            height: auto !important;
+            min-height: 0 !important;
+            padding-top: 0 !important;
+            overflow: visible !important;
+            display: block !important;
+          }
+
+          /* Hide the Hero's built-in slideshow bg — page heroes provide their own image */
+          .qs-reference-hero:not(#home-hero) .home-hero-bg {
+            display: none !important;
+          }
+
+          .qs-reference-hero:not(#home-hero) .qs-reference-hero__layout {
+            position: relative !important;
+            height: auto !important;
+            padding: 80px 20px 20px !important;
+            pointer-events: auto !important;
+          }
+
+          .qs-reference-hero:not(#home-hero) .qs-reference-hero__copy {
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding-top: 0 !important;
+          }
+
+          .qs-reference-hero:not(#home-hero) .qs-reference-hero__actions {
+            margin-bottom: 0 !important;
+          }
+
+          .qs-reference-hero:not(#home-hero) .qs-reference-hero__body {
+            display: none !important;
+          }
+          .qs-reference-hero:not(#home-hero) .qs-reference-hero__body-short {
+            display: block !important;
+            margin-top: 14px !important;
+            font-size: 14px !important;
+            line-height: 1.65 !important;
+            color: #5F6067 !important;
+          }
+          .qs-reference-hero:not(#home-hero) .hero-extended {
+            display: none !important;
+          }
+        }
+
+        /* ══════════════════════════════════════════════════════════════
+           IMAGE-FIRST MOBILE HERO (opt-in via mobileFirstLayout)
+
+           Order on a phone: photo with the eyebrow + headline on it, then
+           CTAs, proof points, stats and one short line of copy. The long
+           description and the desktop floating metrics card are dropped.
+           ══════════════════════════════════════════════════════════════ */
+        .hero-mobile-scrim,
+        .hero-trust-badges,
+        .hero-stats-slot,
+        .qs-reference-hero__body-short {
+          display: none;
+        }
+
+        @media (max-width: 767px) {
+          #home-hero {
+            --hero-media: 58vh;
+            display: block !important;
+            height: auto !important;
+            min-height: 0 !important;
+            padding-top: 0 !important;
+            overflow: hidden !important;
+          }
+
+          /* The desktop white radial wash would bleach the photo */
+          #home-hero.home-hero-reference::before {
+            display: none !important;
+          }
+
+          /* ── photo band pinned to the top of the section ── */
+          #home-hero .home-hero-bg {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: auto !important;
+            width: 100% !important;
+            height: var(--hero-media) !important;
+            margin-top: 0 !important;
+            display: block !important;
+            order: 0 !important;
+            overflow: hidden !important;
+          }
+
+          #home-hero .hero-slideshow-wrapper {
+            position: absolute !important;
+            inset: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 0 !important;
+            margin-top: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+          }
+
+          #home-hero .hero-slideshow-wrapper img {
+            object-position: 60% 50% !important;
+          }
+
+          /* Slow, subtle drift instead of a 7s zoom */
+          #home-hero .hero-slide--kenburns .hero-slide__img,
+          #home-hero .hero-slide__img {
+            animation: hero-mobile-drift 12s ease-out forwards !important;
+          }
+
+          #home-hero .hero-mobile-scrim {
+            display: block !important;
+            position: absolute !important;
+            inset: 0 !important;
+            z-index: 5 !important;
+            pointer-events: none !important;
+            background: linear-gradient(
+              180deg,
+              rgba(18, 10, 12, 0.52) 0%,
+              rgba(18, 10, 12, 0.28) 32%,
+              rgba(18, 10, 12, 0.46) 62%,
+              rgba(18, 10, 12, 0.82) 100%
+            ) !important;
+          }
+
+          #home-hero .hero-slide-dots {
+            bottom: auto !important;
+            top: calc(var(--hero-media) - 34px) !important;
+            right: 20px !important;
+            z-index: 40 !important;
+          }
+
+          /* ── copy column ── */
+          #home-hero .qs-reference-hero__layout {
+            position: relative !important;
+            order: 1 !important;
+            height: auto !important;
+            padding: 0 !important;
+            pointer-events: auto !important;
+          }
+
+          #home-hero .qs-reference-hero__copy {
+            display: flex !important;
+            flex-direction: column !important;
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 20px 34px !important;
+          }
+
+          /* Eyebrow + headline sit on the photo, pinned to its lower edge */
+          #home-hero .hero-headline-group {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            justify-content: flex-end !important;
+            order: 1 !important;
+            min-height: var(--hero-media) !important;
+            margin: 0 0 22px !important;
+            padding: 100px 0 26px !important;
+          }
+
+          /* The eyebrow pill reads as a stray dialog box on a phone; the photo
+             already says "construction" faster than the words do. */
+          #home-hero .qs-reference-hero__badge {
+            display: none !important;
+          }
+
+          /* Let the headline wrap naturally rather than on five forced lines */
+          #home-hero .hero-line__break {
+            display: none !important;
+          }
+
+          #home-hero .hero-line {
+            display: inline !important;
+          }
+
+          #home-hero .qs-reference-hero__title,
+          #home-hero .qs-reference-hero__title span {
+            color: #ffffff !important;
+          }
+
+          #home-hero .qs-reference-hero__title {
+            font-size: clamp(1.85rem, 8.6vw, 2.3rem) !important;
+            line-height: 1.05 !important;
+            letter-spacing: -0.01em !important;
+            text-wrap: balance !important;
+            text-shadow: 0 2px 18px rgba(12, 6, 8, 0.55) !important;
+          }
+
+          #home-hero .qs-reference-hero__rule {
+            margin-top: 16px !important;
+            width: 46px !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+          }
+
+          /* ── decision first: CTAs directly under the photo ── */
+          #home-hero .qs-reference-hero__actions {
+            order: 2 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 14px !important;
+            margin: 0 0 20px !important;
+            width: 100% !important;
+          }
+
+          #home-hero .qs-reference-hero__primary {
+            width: 100% !important;
+            min-height: 52px !important;
+            justify-content: center !important;
+            border-radius: 8px !important;
+          }
+
+          #home-hero .qs-reference-hero__secondary {
+            width: auto !important;
+            min-height: 0 !important;
+            padding: 2px 0 !important;
+            justify-content: flex-start !important;
+            border-bottom: 1px solid rgba(139, 35, 50, 0.35) !important;
+            border-radius: 0 !important;
+          }
+
+          /* Magnetic wrappers must not shrink the full-width primary */
+          #home-hero .qs-reference-hero__actions > * {
+            width: 100% !important;
+          }
+
+          #home-hero .qs-reference-hero__actions > *:last-child {
+            width: auto !important;
+          }
+
+          /* ── three proof points ── */
+          #home-hero .hero-trust-badges {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 8px 16px !important;
+            order: 3 !important;
+            margin: 0 0 22px !important;
+            padding: 0 !important;
+            list-style: none !important;
+          }
+
+          #home-hero .hero-trust-badges li {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            font-family: var(--font-mono) !important;
+            font-size: 10.5px !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.08em !important;
+            text-transform: uppercase !important;
+            color: #6A6B72 !important;
+          }
+
+          #home-hero .hero-trust-badges svg {
+            color: #8B2332 !important;
+          }
+
+          /* ── stats ── */
+          #home-hero .hero-stats-slot {
+            display: block !important;
+            order: 4 !important;
+            margin: 0 0 20px !important;
+          }
+
+          /* The wide floating card is replaced by the strip on phones */
+          #home-hero ~ .home-metrics-card {
+            display: none !important;
+          }
+
+          .hero-stats-strip {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 18px 16px !important;
+            border-top: 1px solid rgba(139, 58, 74, 0.18) !important;
+            border-bottom: 1px solid rgba(139, 58, 74, 0.18) !important;
+            padding: 18px 0 !important;
+          }
+
+          .hero-stats-strip__value {
+            font-family: var(--font-display) !important;
+            font-size: clamp(18px, 5.4vw, 23px) !important;
+            font-weight: 900 !important;
+            line-height: 1.05 !important;
+            color: #8B2332 !important;
+            overflow-wrap: break-word !important;
+          }
+
+          .hero-stats-strip__label {
+            margin-top: 5px !important;
+            font-size: 11.5px !important;
+            font-weight: 500 !important;
+            line-height: 1.35 !important;
+            color: #6A6B72 !important;
+          }
+
+          /* ── one short line, last ── */
+          #home-hero .qs-reference-hero__body {
+            display: none !important;
+          }
+
+          #home-hero .qs-reference-hero__body-short {
+            display: block !important;
+            order: 5 !important;
+            margin: 0 !important;
+            max-width: 34ch !important;
+            font-size: 15px !important;
+            line-height: 1.6 !important;
+          }
+        }
+
+        @keyframes hero-mobile-drift {
+          from { transform: scale(1.08); }
+          to { transform: scale(1.00); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          #home-hero .hero-slide__img {
+            animation: none !important;
+            transform: none !important;
+          }
         }
       `}</style>
 
@@ -644,6 +1005,9 @@ export function Hero({
             </div>
           ))}
 
+          {/* Phone-only scrim so white headline copy stays legible on the photo */}
+          <div className="hero-mobile-scrim" aria-hidden="true" />
+
           {slides.length > 1 && (
             <div className="hero-slide-dots relative z-50">
               {slides.map((_, i) => (
@@ -681,34 +1045,54 @@ export function Hero({
       {/* ── Main Layout Content ── */}
       <div className="qs-reference-hero__layout relative z-[25] w-full h-full flex flex-col justify-start pt-[280px] md:pt-[380px] pointer-events-none px-[4.05vw]">
         <div className="qs-reference-hero__copy w-full max-w-[90vw] md:max-w-[700px] pointer-events-auto">
-          {eyebrow && (
-            <div className="hero-kicker qs-reference-hero__badge inline-flex items-center gap-4 rounded-[8px] border border-[#8B3A4A]/12 bg-white/78 text-[#8B3A4A] shadow-[0_18px_42px_rgba(45,24,28,0.07)] backdrop-blur-xl">
-              <BadgeIcon className="h-5 w-5" strokeWidth={1.8} />
-              <span className="font-mono text-[12px] font-black uppercase tracking-[0.28em]">
-                {eyebrow}
-              </span>
-            </div>
-          )}
+          {/* On phones this group is sized to the image band and bottom-aligned,
+              so the eyebrow and headline read as part of the photo. On larger
+              screens it is display:contents and changes nothing. */}
+          <div className="hero-headline-group">
+            {eyebrow && !mobileFirstLayout && (
+              <div className="hero-kicker qs-reference-hero__badge inline-flex items-center gap-4 rounded-[8px] border border-[#8B3A4A]/12 bg-white/78 text-[#8B3A4A] shadow-[0_18px_42px_rgba(45,24,28,0.07)] backdrop-blur-xl">
+                <BadgeIcon className="h-5 w-5" strokeWidth={1.8} />
+                <span className="font-mono text-[12px] font-black uppercase tracking-[0.28em]">
+                  {eyebrow}
+                </span>
+              </div>
+            )}
 
-          <h1
-            className="qs-reference-hero__title font-display font-black uppercase"
-          >
-            {titleLines.map((line, index) => (
-              <span
-                className="hero-line inline-block"
-                key={line}
-              >
-                {line}
-                {index < titleLines.length - 1 ? <br /> : ""}
-              </span>
-            ))}
-          </h1>
+            <h1
+              className="qs-reference-hero__title font-display font-black uppercase"
+            >
+              {titleLines.map((line, index) => (
+                <span
+                  className="hero-line inline-block"
+                  key={line}
+                >
+                  {line}
+                  {/* The space keeps the words apart on phones, where the
+                      break is hidden and the lines reflow inline. */}
+                  {index < titleLines.length - 1 ? (
+                    <>
+                      {" "}
+                      <br className="hero-line__break" />
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </span>
+              ))}
+            </h1>
 
-          <div className="hero-line qs-reference-hero__rule h-px w-16 bg-[#8B3A4A]" />
+            <div className="hero-line qs-reference-hero__rule h-px w-16 bg-[#8B3A4A]" />
+          </div>
 
           <p className="hero-copy qs-reference-hero__body max-w-[610px] font-medium text-[#5F6067]">
             {description}
           </p>
+
+          {shortDescription && (
+            <p className="qs-reference-hero__body-short font-medium text-[#5F6067]">
+              {shortDescription}
+            </p>
+          )}
 
           {children && (
             <div className="hero-extended mt-6 pb-8 w-full max-w-[610px]">
@@ -734,6 +1118,19 @@ export function Hero({
               </MagneticButton>
             )}
           </div>
+
+          {trustBadges && trustBadges.length > 0 && (
+            <ul className="hero-trust-badges" aria-label="Company credentials">
+              {trustBadges.map((badge) => (
+                <li key={badge}>
+                  <Check className="size-3.5" strokeWidth={3} aria-hidden="true" />
+                  {badge}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {statsSlot && <div className="hero-stats-slot">{statsSlot}</div>}
         </div>
       </div>
     </section>

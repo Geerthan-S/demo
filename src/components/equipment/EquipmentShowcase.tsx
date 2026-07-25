@@ -1,9 +1,24 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Gauge, CheckCircle2, Factory } from "lucide-react";
 import type { EquipmentItem } from "@/lib/repositories";
+
+function EquipmentImage({ src, alt }: { src: string; alt: string }) {
+    const [imgSrc, setImgSrc] = useState(src);
+
+    return (
+        <Image
+            src={imgSrc}
+            alt={alt}
+            fill
+            className="object-cover transition-transform duration-1000 group-hover:scale-105"
+            onError={() => setImgSrc("/home-reference/industry-utilities.jpg")}
+        />
+    );
+}
 
 export function EquipmentShowcase({ equipment }: { equipment: EquipmentItem[] }) {
     if (!equipment || equipment.length === 0) return null;
@@ -22,12 +37,7 @@ export function EquipmentShowcase({ equipment }: { equipment: EquipmentItem[] })
                             <div className={`relative w-full lg:w-[55%] h-[300px] lg:h-auto overflow-hidden ${isEven ? 'lg:order-1' : 'lg:order-3'}`}>
                                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent z-10" />
                                 {item.imageUrl && (
-                                    <Image
-                                        src={item.imageUrl}
-                                        alt={item.name}
-                                        fill
-                                        className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                                    />
+                                    <EquipmentImage src={item.imageUrl} alt={item.name} />
                                 )}
                             </div>
 
