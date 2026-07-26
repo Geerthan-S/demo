@@ -1,0 +1,5 @@
+{
+  "tagName": "A",
+  "className": "qs-reference-hero__primary inline-flex items-center justify-center gap-2 rounded-[6px] bg-[#8B2332] font-mono text-[12px] font-bold uppercase tracking-[0.15em] transition-colors hover:bg-[#6A1A25]",
+  "outerHTML": "<a class=\"qs-reference-hero__primary inline-flex items-center justify-center gap-2 rounded-[6px] bg-[#8B2332] font-mono text-[12px] font-bold uppercase tracking-[0.15em] transition-colors hover:bg-[#6A1A25]\" href=\"/projects\">VIEW PROJECTS<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\""
+}

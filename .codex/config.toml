@@ -1,0 +1,7 @@
+[mcp_servers.figma]
+command = "npx"
+args = [
+    "-y",
+    "@modelcontextprotocol/server-figma",
+]
+env_vars = ["FIGMA_PERSONAL_ACCESS_TOKEN"]

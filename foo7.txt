@@ -1,0 +1,92 @@
+ro__primary {
+    width: 100%;
+  }
+
+  .qs-reference-hero__feature,
+  .qs-reference-hero__cert {
+    padding-inline: 22px;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE PROCESS TIMELINE REDESIGN
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .project-delivery__steps {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    position: relative !important;
+  }
+
+  .delivery-step {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 20px !important;
+    margin: 0 0 54px 0 !important;
+    padding: 0 0 0 54px !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .delivery-step:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .delivery-step__track-h,
+  .delivery-step__track-h-fill,
+  .connector-premium-flow,
+  .delivery-step__number {
+    display: none !important;
+  }
+
+  .delivery-step__track-v {
+    position: absolute !important;
+    top: 43px !important;
+    /* Starts right below the first dot */
+    bottom: -97px !important;
+    height: auto !important;
+    left: 24px !important;
+    /* Centers exactly */
+    width: 2px !important;
+    background: rgba(139, 58, 74, 0.15) !important;
+    display: block !important;
+    z-index: 1 !important;
+  }
+
+  .delivery-step:last-child .delivery-step__track-v {
+    display: none !important;
+  }
+
+  .delivery-step__track-v-fill {
+    position: absolute !important;
+    top: 43px !important;
+    bottom: -97px !important;
+    height: auto !important;
+    left: 24px !important;
+    width: 2px !important;
+    background: #8A3841 !important;
+    display: block !important;
+    z-index: 2 !important;
+    transform-origin: top !important;
+  }
+
+  .delivery-step:last-child .delivery-step__track-v-fill {
+    display: none !important;
+  }
+
+  .delivery-step__dot {
+    position: absolute !important;
+    top: 32px !important;
+    left: 14px !important;
+    z-index: 20 !important;
+    transform: none !important;
+    margin: 0 !important;
+  }
+
+  .delivery-step__circle {

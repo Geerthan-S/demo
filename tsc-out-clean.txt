@@ -1,0 +1,8 @@
+src/app/admin/job-openings/[id]/edit/page.tsx(134,33): error TS2322: Type 'string | null' is not assignable to type 'string | number | readonly string[] | undefined'.
+  Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+src/app/admin/job-openings/[id]/edit/page.tsx(145,33): error TS2322: Type 'string | null' is not assignable to type 'string | number | readonly string[] | undefined'.
+  Type 'null' is not assignable to type 'string | number | readonly string[] | undefined'.
+src/app/admin/job-openings/page.tsx(13,9): error TS7034: Variable 'jobOpenings' implicitly has type 'any[]' in some locations where its type cannot be determined.
+src/app/admin/job-openings/page.tsx(74,30): error TS7005: Variable 'jobOpenings' implicitly has an 'any[]' type.
+src/app/api/job-applications/route.ts(80,9): error TS2353: Object literal may only specify known properties, and 'name' does not exist in type 'Without<JobApplicationCreateInput, JobApplicationUncheckedCreateInput> & JobApplicationUncheckedCreateInput'.
+src/app/api/job-applications/route.ts(121,18): error TS2353: Object literal may only specify known properties, and 'createdAt' does not exist in type 'JobApplicationOrderByWithRelationInput | JobApplicationOrderByWithRelationInput[]'.

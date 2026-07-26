@@ -1,0 +1,153 @@
+o__primary {
+    width: 100%;
+  }
+
+  .qs-reference-hero__feature,
+  .qs-reference-hero__cert {
+    padding-inline: 22px;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE PROCESS TIMELINE REDESIGN
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .project-delivery__steps {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    position: relative !important;
+  }
+
+  .delivery-step {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 20px !important;
+    margin: 0 0 54px 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .delivery-step:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .delivery-step__track-h,
+  .delivery-step__track-h-fill,
+  .connector-premium-flow,
+  .delivery-step__number {
+    display: none !important;
+  }
+
+  .delivery-step__track-v {
+    position: absolute !important;
+    top: 43px !important; /* Starts right below the first dot */
+    bottom: -97px !important; /* Extends to next dot */
+    left: 45px !important; /* Centers exactly (icon = 76px, center = 38px + 7px offset maybe) */
+    width: 2px !important;
+    background: rgba(139, 58, 74, 0.15) !important;
+    display: block !important;
+    z-index: 1 !important;
+  }
+
+  .delivery-step:last-child .delivery-step__track-v {
+    display: none !important;
+  }
+
+  .delivery-step__track-v-fill {
+    position: absolute !important;
+    top: 43px !important;
+    bottom: -97px !important;
+    left: 45px !important;
+    width: 2px !important;
+    background: #8A3841 !important;
+    display: block !important;
+    z-index: 2 !important;
+    transform-origin: top !important;
+  }
+
+  .delivery-step:last-child .delivery-step__track-v-fill {
+    display: none !important;
+  }
+
+  .delivery-step__dot {
+    position: absolute !important;
+    top: 32px !important;
+    left: 34px !important;
+    z-index: 20 !important;
+    transform: none !important;
+    margin: 0 !important;
+  }
+
+  .delivery-step__circle {
+    position: relative !important;
+    flex: 0 0 auto !important;
+    width: 76px !important;
+    height: 76px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 5 !important;
+    margin: 0 !important;
+  }
+
+  .delivery-step__icon {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .delivery-step__content {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    padding: 0 !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    transform: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .delivery-step__number--mobile {
+    display: block !important;
+    font-family: var(--font-mono) !important;
+    color: rgba(139, 58, 74, 0.4) !important;
+    font-size: clamp(2rem, 6vw, 3rem) !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    margin: 0 0 4px 0 !important;
+    text-align: left !important;
+  }
+
+  .delivery-step__title {
+    color: var(--ref-text) !important;
+    font-size: clamp(1.4rem, 5vw, 2rem) !important;
+    line-height: 1.2 !important;
+    margin: 0 0 12px 0 !important;
+    text-align: left !important;
+  }
+
+  .delivery-step__divider {
+    display: block !important;
+    width: 40px !important;
+    height: 2px !important;
+    background: #8A3841 !important;
+    margin: 0 0 12px 0 !important;
+  }
+
+  .delivery-step__desc {
+    color: rgba(32, 33, 38, 0.75) !important;
+    font-size: clamp(0.95rem, 3.8vw, 1.05rem) !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    text-align: left !important;
+  }
+}

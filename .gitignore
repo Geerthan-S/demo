@@ -1,0 +1,42 @@
+﻿# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# Production and local environment files
+.env
+.env*.local
+
+# Logs
+*.log
+dev-*.err.log
+dev-*.log
+server.err.log
+server.log
+
+# Local editor and OS files
+.idea/
+.vscode/
+.DS_Store
+
+# Local verification artifacts
+.verification/
+output/
+tmp/
+/hero/
+WORK_REPORT_*.md
+work-report-*.md
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Claude Code working directory
+.claude/
+
+# Playwright MCP server
+.playwright-mcp/
+
+# User uploads
+public/uploads/

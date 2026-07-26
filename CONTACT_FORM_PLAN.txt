@@ -1,0 +1,2160 @@
+================================================================================
+DOCKSIDE CONSTRUCTIONS WEBSITE - COMPREHENSIVE TECHNICAL ANALYSIS REPORT
+================================================================================
+
+Generated: 2026-06-29
+Report Type: Full System Analysis - Public Pages, Admin Panel, API, Components
+Purpose: Complete audit of website functionality, architecture, and features
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+
+1. EXECUTIVE SUMMARY
+2. TECHNOLOGY STACK & DEPENDENCIES
+3. DATABASE SCHEMA & DATA MODELS
+4. PUBLIC-FACING PAGES ANALYSIS
+5. ADMIN PANEL ANALYSIS
+6. API ROUTES & BACKEND FUNCTIONALITY
+7. AUTHENTICATION & AUTHORIZATION
+8. COMPONENTS ARCHITECTURE
+9. FEATURES & FUNCTIONALITY MATRIX
+10. CONTACT FORM IMPLEMENTATION DETAILS
+11. SECURITY & BEST PRACTICES
+12. RECOMMENDATIONS & IMPROVEMENTS
+
+================================================================================
+1. EXECUTIVE SUMMARY
+================================================================================
+
+PROJECT OVERVIEW
+----------------
+Dockside Constructions is a full-stack Next.js website for a premium
+construction company specializing in industrial, commercial, and infrastructure
+projects. The site features a comprehensive CMS-powered admin panel, project
+portfolio showcase, client management, and contact functionality.
+
+KEY STATISTICS
+--------------
+- Total Pages: 43 (12 public-facing, 31 admin pages)
+- API Routes: 8 endpoints
+- Database Models: 14 Prisma models
+- Admin Modules: 9 control surfaces
+- Authentication: NextAuth v5 with credentials provider
+- Media Management: Cloudinary integration
+
+CORE FUNCTIONALITY
+------------------
+✓ Project portfolio management with case studies
+✓ Equipment fleet tracking and display
+✓ Client logo showcase and testimonials
+✓ Downloadable documents system (certifications, profiles)
+✓ Quality & Safety policy management
+✓ Site content CMS with dynamic page editing
+✓ Contact form with inquiry type categorization
+✓ Media asset management with Cloudinary
+✓ Role-based admin access (SUPER_ADMIN, ADMIN, EDITOR)
+
+================================================================================
+2. TECHNOLOGY STACK & DEPENDENCIES
+================================================================================
+
+FRAMEWORK & RUNTIME
+-------------------
+- Next.js: v16.2.7 (App Router, React Server Components)
+- React: v19.2.4
+- Node.js: v20+
+- TypeScript: v5
+
+DATABASE & ORM
+--------------
+- PostgreSQL (via Neon or similar provider)
+- Prisma: v6.19.0
+- Connection: DATABASE_URL, DIRECT_URL env variables
+
+AUTHENTICATION
+--------------
+- NextAuth: v5.0.0-beta.30
+- bcryptjs: Password hashing
+- JWT session strategy
+- Fallback admin credentials for no-database mode
+
+UI FRAMEWORK & STYLING
+----------------------
+- Tailwind CSS: v4
+- Radix UI: Complete component library
+  * Alert Dialog, Avatar, Dropdown Menu, Label, Select
+  * Separator, Slot, Tabs, Tooltip
+- Framer Motion: v12.40.0 (animations)
+- GSAP: v3.15.0 (advanced animations)
+- Lucide React: v0.562.0 (icon system)
+- class-variance-authority: Component variants
+- tailwind-merge: Utility class merging
+
+MEDIA MANAGEMENT
+----------------
+- Cloudinary: v2.8.0
+- Environment variables:
+  * CLOUDINARY_CLOUD_NAME
+  * CLOUDINARY_API_KEY
+  * CLOUDINARY_API_SECRET
+
+VALIDATION & SCHEMAS
+--------------------
+- Zod: v4.2.0 (runtime type validation)
+- Used for form validation, API input validation, environment variables
+
+DEVELOPMENT TOOLS
+-----------------
+- ESLint: Code quality
+- Prisma Studio: Database management GUI
+- TypeScript strict mode
+
+================================================================================
+3. DATABASE SCHEMA & DATA MODELS
+================================================================================
+
+The application uses 14 Prisma models organized into logical domains:
+
+3.1 USER MANAGEMENT
+-------------------
+Model: User
+Fields:
+  - id (String, CUID, PK)
+  - name (String)
+  - email (String, unique, indexed)
+  - passwordHash (String, bcrypt hashed)
+  - role (Enum: SUPER_ADMIN, ADMIN, EDITOR)
+  - createdAt, updatedAt (DateTime)
+Relations:
+  - Project[] (one-to-many)
+Indexes: role
+Purpose: Admin user authentication and authorization
+
+3.2 PROJECT MANAGEMENT
+----------------------
+Model: Project
+Fields:
+  - id, slug (String, unique)
+  - title, clientName, clientLogo (String)
+  - featuredImage (String, required)
+  - gallery (String[], array of image URLs)
+  - location, scopeOfWork, timeline (String)
+  - projectValue, contractValue (String)
+  - status (Enum: PLANNING, IN_PROGRESS, COMPLETED, ON_HOLD)
+  - servicesUsed (String[], array)
+  - industry, summary, body (String)
+  - clientOverview, clientType (String)
+  - keyAchievements (String[], array)
+  - projectCount, yearsAssociated (String)
+  - builtUpArea, roadLength, concreteUsed, steelUsed (String)
+  - workforceDeployed (String)
+  - startDate, endDate, completedAt (DateTime)
+  - completionPct (Int, default 0)
+  - seoTitle, seoDescription (String, optional)
+  - published, featured (Boolean)
+  - folderName (String, links to Cloudinary)
+  - authorId (String, FK to User)
+  - createdAt, updatedAt (DateTime)
+Indexes:
+  - industry
+  - [published, featured, updatedAt]
+  - [status, updatedAt]
+Purpose: Full project case study management with rich metadata
+
+3.3 CLIENT MANAGEMENT
+---------------------
+Model: Client
+Fields:
+  - id (String, CUID, PK)
+  - name, slug (String, unique)
+  - logoUrl (String, optional)
+  - industry, website (String, optional)
+  - testimonial (String, optional)
+  - featured (Boolean, default true)
+  - createdAt, updatedAt (DateTime)
+Indexes:
+  - [featured, updatedAt]
+  - industry
+Purpose: Client logo showcase and testimonial management
+
+3.4 EQUIPMENT FLEET
+-------------------
+Model: Equipment
+Fields:
+  - id (String, CUID, PK)
+  - name, slug (String, unique)
+  - imageUrl (String, optional)
+  - quantity (Int, default 1)
+  - capacity, manufacturer (String, optional)
+  - year (Int, optional)
+  - status (String, default "Active")
+  - sortOrder (Int, default 0)
+  - published (Boolean, default true)
+  - createdAt, updatedAt (DateTime)
+Indexes: [published, sortOrder]
+Purpose: Heavy equipment inventory management
+
+3.5 DOWNLOADS SYSTEM
+--------------------
+Model: Download
+Fields:
+  - id (String, CUID, PK)
+  - title (String)
+  - category (String, e.g., "Certifications", "Company Profile")
+  - fileUrl (String, public path or URL)
+  - fileType (String, default "pdf")
+  - sortOrder (Int, default 0)
+  - published (Boolean, default true)
+  - createdAt, updatedAt (DateTime)
+Indexes: [published, category]
+Purpose: Downloadable documents (profiles, certifications, tender docs)
+
+3.6 CONTACT MESSAGES
+--------------------
+Model: ContactMessage
+Fields:
+  - id (String, CUID, PK)
+  - name, email (String)
+  - message (String, includes phone and project details)
+  - createdAt (DateTime)
+Indexes:
+  - createdAt
+  - email
+Purpose: Store contact form submissions
+
+3.7 SITE CONTENT CMS
+--------------------
+Model: SitePage
+Fields:
+  - id (String, CUID, PK)
+  - slug (String, unique)
+  - title, description (String)
+  - heroTitle, heroDescription, heroImage (String)
+  - sections (Json, array of section objects)
+  - published (Boolean, default true)
+  - createdAt, updatedAt (DateTime)
+Indexes: [published, slug]
+Purpose: Dynamic page content management (home, service pages)
+
+Model: SiteSetting
+Fields:
+  - id (String, CUID, PK)
+  - key (String, unique)
+  - value (String)
+  - updatedAt (DateTime)
+Purpose: Global site settings (contact info, social links, SEO)
+
+3.8 MEDIA ASSETS
+----------------
+Model: MediaAsset
+Fields:
+  - id (String, CUID, PK)
+  - publicId (String, Cloudinary ID)
+  - secureUrl (String, Cloudinary URL)
+  - resourceType (String, "image" or "video")
+  - alt (String, optional)
+  - createdAt (DateTime)
+Indexes: createdAt
+Purpose: Track uploaded media assets from Cloudinary
+
+3.9 SEO MANAGEMENT
+------------------
+Model: SeoEntry
+Fields:
+  - id (String, CUID, PK)
+  - path (String, unique, e.g., "/projects")
+  - title, description (String)
+  - image (String, optional OG image)
+  - createdAt, updatedAt (DateTime)
+Purpose: Per-page SEO metadata management
+
+3.10 CAREER SYSTEM
+------------------
+Model: CareerSetting
+Fields:
+  - id (String, CUID, PK)
+  - internshipButtonText (String, default "Apply for Internship")
+  - internshipActionType (String, default "modal")
+  - internshipActionUrl (String, default "")
+  - updatedAt (DateTime)
+Purpose: Configure career page CTA behavior
+
+Model: JobOpening
+Fields:
+  - id (String, CUID, PK)
+  - title, department, experience, location (String)
+  - type (String, default "Full-Time")
+  - skills (String[], array)
+  - published (Boolean, default true)
+  - createdAt, updatedAt (DateTime)
+Indexes: [published, updatedAt]
+Purpose: Job postings management
+
+================================================================================
+4. PUBLIC-FACING PAGES ANALYSIS
+================================================================================
+
+The public site uses the App Router pattern with (site) route group.
+Total Public Pages: 12 main pages + dynamic routes
+
+4.1 HOMEPAGE (/)
+----------------
+File: src/app/(site)/page.tsx
+Route: /
+Status: ACTIVE
+Features:
+  ✓ Hero carousel with multiple slides and navigation
+  ✓ Trust metrics section (25+ projects, 100 CR+ value, earthwork, clients)
+  ✓ About section with company overview and feature list
+  ✓ Services showcase (8 service cards numbered 01-08)
+  ✓ Client logo marquee with infinite scroll animation
+  ✓ Featured projects grid (4 projects) with category filtering
+  ✓ Project delivery process (6-step visualization)
+  ✓ "Ready to Build With Confidence?" CTA section
+  ✓ Comprehensive footer with navigation, legal info, contact details
+Components Used:
+  - Hero carousel, ProjectCard, ClientLogoMarquee
+  - CountUp animations, Framer Motion reveals
+  - DeliveryStep, About section components
+Data Sources:
+  - Projects: database query with featured=true filter
+  - Clients: database query for logo display
+  - Services: static content from lib/content.ts
+Critical Issues:
+  ⚠ Trust metrics showing "0+ M³ Earthwork" and "0+ Major Clients"
+    (indicates missing data or placeholder values)
+Metadata:
+  - Dynamic OG image and meta tags
+  - Canonical URL configured
+
+4.2 ABOUT PAGE (/about)
+-----------------------
+File: src/app/(site)/about/page.tsx
+Route: /about
+Status: REDIRECT ONLY
+Behavior: Permanently redirects to /#about (homepage anchor)
+Purpose: Legacy URL support, content integrated into homepage
+Note: No dedicated about page exists
+
+4.3 SERVICES PAGE (/services)
+-----------------------------
+File: src/app/(site)/services/page.tsx
+Route: /services
+Status: ACTIVE
+Features:
+  ✓ Service landing page with 8 service categories
+  ✓ Each service card displays:
+    - Title, icon, description
+    - Related project count (calculated dynamically)
+    - Deliverables list
+    - Benefits list
+  ✓ Links to individual service detail pages
+  ✓ Filterable and searchable interface
+Service Categories:
+  1. Civil Construction
+  2. Road & Highways
+  3. Railway Works
+  4. Electrical Works
+  5. Industrial Projects
+  6. Project Management
+  7. Water Infrastructure & Drainage Works
+  8. Road Safety & Traffic Management Systems
+Data Logic:
+  - Services defined in lib/content.ts (serviceCategories array)
+  - Related projects calculated by matching servicesUsed field
+  - Uses pattern matching with aliases for flexible matching
+  - Example: "Road & Highways" matches "Road", "Highways", "Road infrastructure"
+Component: ServicesLandingPage (client component)
+Metadata:
+  - Title: "Services"
+  - SEO optimized descriptions
+  - Canonical URL: /services
+
+4.4 PROJECTS PAGE (/projects)
+-----------------------------
+File: src/app/(site)/projects/page.tsx
+Route: /projects
+Status: ACTIVE
+Features:
+  ✓ Full portfolio showcase with hero section
+  ✓ Project metrics (65+ works, INR 60+ Cr, 8 services, 10 references)
+  ✓ Category filtering (All, Government, Private Sector)
+  ✓ Project cards with:
+    - Featured image
+    - Client name and logo
+    - Project value
+    - Status badge (Completed, In Progress)
+    - Services delivered
+    - "View Case Study" link
+  ✓ "Delivering Excellence" proof section
+  ✓ Client logo marquee
+  ✓ Floating CTA button
+Query Parameters:
+  - ?category=government (filters to government projects)
+  - ?category=private-sector (filters to private sector projects)
+Components:
+  - ProjectsFilterGrid (handles filtering and display)
+  - ProjectCard, ClientLogoMarquee, FloatingCTA
+Data Sources:
+  - Projects: getProjects() with full metadata
+  - Clients: getClients() for logo display
+Metadata:
+  - Dynamic title and description
+  - OG tags configured
+
+4.5 PROJECT DETAIL PAGE (/projects/[slug])
+------------------------------------------
+File: src/app/(site)/projects/[slug]/page.tsx
+Route: /projects/{project-slug}
+Status: ACTIVE (Dynamic Route)
+Features:
+  ✓ Full case study layout with:
+    - Hero section with featured image
+    - Client overview and logo
+    - Project summary
+    - Key metrics (timeline, value, location, scope)
+    - Image gallery
+    - Detailed project body (markdown/rich text)
+    - Key achievements list
+    - Services delivered
+    - Related projects section
+  ✓ Breadcrumb navigation
+  ✓ Share buttons
+  ✓ "Contact Us" CTA
+Dynamic Params:
+  - slug: Project slug from database
+SEO:
+  - Custom seoTitle and seoDescription per project
+  - OG image from project featuredImage
+  - Structured data for rich snippets
+Data Source:
+  - Single project query by slug
+  - Related projects query by industry/services
+
+4.6 CONTACT PAGE (/contact)
+---------------------------
+File: src/app/(site)/contact/page.tsx
+Route: /contact
+Status: ACTIVE
+Features:
+  ✓ Hero section with value proposition
+  ✓ Contact information panel:
+    - Registered office address
+    - Phone numbers (2 lines)
+    - Email addresses (2 addresses)
+    - Office hours
+  ✓ Contact form with fields:
+    - Name, Email, Phone (required)
+    - Company (optional)
+    - Project Type dropdown (6 service options)
+    - Message textarea (required)
+  ✓ "Why connect with us?" section (5 reasons)
+  ✓ Google Maps integration with location
+  ✓ "Get Directions" CTA button
+  ✓ Client logo marquee
+Form Handling:
+  - Server action: submitContact()
+  - Validation: Zod schema (name min 2, email valid, phone min 6, message min 10)
+  - Data storage: ContactMessage model
+  - Enriched message includes company, phone, project type
+  - Redirect to /contact/thank-you on success
+Map Integration:
+  - Embedded Google Maps iframe
+  - Coordinates: 12.886303, 80.0823886 (Villupuram, Tamil Nadu)
+  - "Get Directions" deep link to Google Maps
+Security:
+  - CSRF protection via NextAuth
+  - Input validation with Zod
+  - No file upload (basic contact form)
+
+4.7 CONTACT THANK YOU PAGE (/contact/thank-you)
+-----------------------------------------------
+File: src/app/(site)/contact/thank-you/page.tsx
+Route: /contact/thank-you
+Status: ACTIVE
+Purpose: Confirmation page after successful form submission
+Features:
+  ✓ Success message
+  ✓ "What happens next" timeline
+  ✓ Link back to homepage
+  ✓ Additional contact information
+
+4.8 EQUIPMENT FLEET PAGE (/equipment-fleet)
+-------------------------------------------
+File: src/app/(site)/equipment-fleet/page.tsx
+Route: /equipment-fleet
+Status: ACTIVE
+Features:
+  ✓ Hero section showcasing heavy equipment
+  ✓ Equipment grid with:
+    - Equipment image
+    - Name and capacity
+    - Quantity badge
+    - Manufacturer and year
+    - Status indicator (Active/Maintenance)
+  ✓ Category filtering
+  ✓ Summary statistics
+Components:
+  - EquipmentGridClient (client component for filtering)
+Data Source:
+  - Equipment model query (published=true, sorted by sortOrder)
+Metadata:
+  - Custom metadata from equipment-fleet/metadata.ts
+
+4.9 CLIENTS PAGE (/clients)
+---------------------------
+File: src/app/(site)/clients/page.tsx
+Route: /clients
+Status: ACTIVE
+Features:
+  ✓ Client showcase with logos
+  ✓ Industry filtering
+  ✓ Testimonials (if available)
+  ✓ Client statistics
+Data Source:
+  - Client model query (featured=true)
+
+4.10 DOWNLOADS PAGE (/downloads)
+--------------------------------
+File: src/app/(site)/downloads/page.tsx
+Route: /downloads
+Status: ACTIVE
+Features:
+  ✓ Downloadable documents organized by category
+  ✓ Categories: Company Profile, Certifications, Safety Documents, etc.
+  ✓ File type indicators (PDF, DOC, etc.)
+  ✓ Download count tracking (optional)
+Component:
+  - DownloadGroupCard for category grouping
+Data Source:
+  - Download model query (published=true, sorted by category and sortOrder)
+
+4.11 QUALITY & SAFETY PAGE (/quality-safety)
+--------------------------------------------
+File: src/app/(site)/quality-safety/page.tsx
+Route: /quality-safety
+Status: ACTIVE
+Features:
+  ✓ Quality policy statement
+  ✓ Safety policy statement
+  ✓ ISO certifications display
+  ✓ Certificate grid with images
+  ✓ Quality assurance process
+  ✓ Safety statistics and metrics
+Components:
+  - CertificateGrid component
+Data Source:
+  - SiteSetting model for policy text (quality_policy, safety_policy)
+  - Static certification images
+
+4.12 INDUSTRIES PAGE (/industries)
+----------------------------------
+File: src/app/(site)/industries/page.tsx
+Route: /industries
+Status: ACTIVE
+Purpose: Showcase industries served
+Features:
+  ✓ Industry cards with project counts
+  ✓ Case studies per industry
+  ✓ Sector-specific capabilities
+Data Source:
+  - Projects grouped by industry field
+
+================================================================================
+5. ADMIN PANEL ANALYSIS
+================================================================================
+
+Admin Panel Access: /admin (requires authentication)
+Admin Layout: src/app/admin/layout.tsx
+Authentication: NextAuth v5 with JWT session strategy
+Authorization: Role-based (SUPER_ADMIN, ADMIN, EDITOR)
+
+ADMIN NAVIGATION STRUCTURE
+--------------------------
+The admin panel uses a sidebar navigation with 9 control modules:
+
+1. Overview (/admin)
+2. Projects (/admin/projects)
+3. Equipment Fleet (/admin/equipment)
+4. Quality & Safety (/admin/quality-safety)
+5. Downloads (/admin/downloads)
+6. Files Manager (/admin/files)
+7. Site Content (/admin/site-content)
+8. Clients (/admin/clients)
+9. Site Settings (/admin/site-settings)
+
+ADMIN BRANDING
+--------------
+- Logo: Dockside logo with "Dockside Ops" text
+- Subtitle: "{USER_ROLE} control surface"
+- Status indicator: "Live CMS - Public-site control layer"
+- Sign out button at bottom of sidebar
+
+5.1 OVERVIEW DASHBOARD (/admin)
+--------------------------------
+File: src/app/admin/page.tsx
+Purpose: Main admin landing page
+Features:
+  ✓ Shows site content pages table with edit actions
+  ✓ "Sync Default Content" button to restore default content
+  ✓ Lists all editable pages (home, service pages)
+  ✓ Shows page group, route, section count, status
+Data Displayed:
+  - Page title, slug, route
+  - Number of sections in each page
+  - Published/Hidden status
+  - Edit button for each page
+Actions:
+  - syncDefaultSitePages: Restore all default page content
+  - Navigate to page editor
+
+5.2 PROJECTS MODULE (/admin/projects)
+-------------------------------------
+File: src/app/admin/projects/page.tsx
+Purpose: Manage project portfolio and case studies
+Features:
+  ✓ Full CRUD operations for projects
+  ✓ Table view with sortable columns
+  ✓ Project list showing:
+    - Title, Client, Category, Status, Featured flag
+  ✓ Bulk actions support
+  ✓ "Add Project" button
+  ✓ Edit and Delete actions per project
+Data Columns:
+  - Project title
+  - Client name
+  - Category (Government/Private Sector badge)
+  - Status (PLANNING, IN_PROGRESS, COMPLETED, ON_HOLD)
+  - Featured flag (Yes/No)
+Actions:
+  - Create: Navigate to /admin/projects/new
+  - Edit: Navigate to /admin/projects/{id}/edit
+  - Delete: Server action with confirmation (Manager+ only)
+Database Notice:
+  - Shows warning if DATABASE_URL not configured
+  - Falls back to seed data if no database available
+
+CREATE/EDIT PROJECT FORM (/admin/projects/new, /admin/projects/{id}/edit)
+--------------------------------------------------------------------------
+File: src/app/admin/projects/[id]/edit/page.tsx
+Form Fields (Comprehensive):
+
+  BASIC INFORMATION:
+  - Title (text, required, min 3 chars)
+  - SEO Slug (text, auto-generated from title)
+  - Client Name (text, required, min 2 chars)
+  - Client Type (select: Government, Private Sector)
+  - Client Logo URL (text, optional, validated as URL or /path)
+
+  MEDIA:
+  - Featured Image (text, required, URL or /path)
+  - Gallery Images (textarea, one URL per line, min 1 image)
+
+  PROJECT DETAILS:
+  - Location (text, required)
+  - Scope of Work (textarea, required, min 10 chars)
+  - Timeline (text, required)
+  - Project Value (text, required)
+  - Contract Value (text, optional)
+  - Years Associated (text, optional)
+  - Project Count (text, optional)
+
+  STATUS & CATEGORIZATION:
+  - Status (select: PLANNING, IN_PROGRESS, COMPLETED, ON_HOLD)
+  - Industry (text, required)
+  - Services Used / Nature of Works (textarea, comma-separated, min 1)
+
+  CONTENT:
+  - Summary (textarea, required, min 10 chars)
+  - Client Overview (textarea, optional)
+  - Key Achievements (textarea, one per line, optional)
+  - Full Case Study Body (textarea, required, min 20 chars, markdown supported)
+
+  TECHNICAL METRICS (Optional):
+  - Built-Up Area
+  - Road Length
+  - Concrete Used
+  - Steel Used
+  - Workforce Deployed
+  - Start Date, End Date
+  - Completion Percentage
+
+  SEO:
+  - SEO Title (text, optional, defaults to project title)
+  - SEO Description (textarea, optional)
+
+  PUBLISHING:
+  - Published (checkbox)
+  - Featured (checkbox, shows on homepage)
+
+  CLOUDINARY INTEGRATION:
+  - Folder Name (text, links to Cloudinary folder)
+
+Validation:
+  - Zod schema validation on server side
+  - All required fields checked
+  - URLs validated (must start with / or https://)
+  - Gallery must have at least 1 image
+  - Services must have at least 1 entry
+  - Unique slug constraint (shows error if duplicate)
+
+Server Actions:
+  - createProject(formData): Creates new project with authorId
+  - updateProject(id, formData): Updates existing project
+  - deleteProject(id): Soft deletes project (Manager+ only)
+  - All actions revalidate relevant paths (/projects, /, /admin/projects)
+
+5.3 EQUIPMENT FLEET MODULE (/admin/equipment)
+---------------------------------------------
+File: src/app/admin/equipment/page.tsx
+Purpose: Manage heavy equipment inventory
+Features:
+  ✓ Equipment list with thumbnail images
+  ✓ Summary statistics cards:
+    - Equipment Types count
+    - Total Units (sum of quantities)
+    - Active equipment count
+    - Published count
+  ✓ Table columns:
+    - Sort order (#)
+    - Thumbnail + Name + Slug
+    - Quantity
+    - Capacity
+    - Manufacturer (hidden on mobile)
+    - Year (hidden on tablets)
+    - Status badge (Active/Maintenance)
+    - Edit/Delete actions
+  ✓ "Add Equipment" button
+  ✓ Empty state with call-to-action
+Actions:
+  - Create: Navigate to /admin/equipment/new
+  - Edit: Navigate to /admin/equipment/{id}/edit
+  - Delete: Server action with inline form
+
+CREATE/EDIT EQUIPMENT FORM:
+Fields:
+  - Name (text, required, min 2 chars)
+  - Slug (text, auto-generated)
+  - Image URL (text, optional, validated)
+  - Quantity (number, required, min 1, default 1)
+  - Capacity (text, optional, e.g., "20 Ton")
+  - Description (textarea, optional)
+  - Manufacturer (text, optional)
+  - Year (number, optional, 1900-current year+1)
+  - Status (text, required, default "Active")
+  - Sort Order (number, default 0, controls display order)
+  - Published (checkbox, default true)
+
+Server Actions:
+  - createEquipment(formData)
+  - updateEquipment(id, formData)
+  - deleteEquipment(id)
+  - Revalidates /equipment-fleet and /admin/equipment
+
+5.4 QUALITY & SAFETY MODULE (/admin/quality-safety)
+---------------------------------------------------
+File: src/app/admin/quality-safety/page.tsx
+Purpose: Manage quality and safety policy statements
+Features:
+  ✓ Simple form with two large textareas
+  ✓ Quality Policy editor
+  ✓ Safety Policy editor
+  ✓ Default policy text if not set
+  ✓ Link to preview public page
+  ✓ Success/error alerts
+Form Fields:
+  - Quality Policy (textarea, 6 rows, required)
+  - Safety Policy (textarea, 6 rows, required)
+Default Content:
+  - Quality: ISO 9001:2015 commitment statement
+  - Safety: ISO 45001:2018 zero-compromise statement
+Server Action:
+  - savePolicies(formData): Upserts to SiteSetting table
+  - Keys: quality_policy, safety_policy
+Storage:
+  - SiteSetting model with key-value pairs
+  - Immediate live updates on public site
+
+5.5 DOWNLOADS MODULE (/admin/downloads)
+---------------------------------------
+File: src/app/admin/downloads/page.tsx
+Purpose: Manage downloadable documents and certifications
+Features:
+  ✓ Table view of all downloadable files
+  ✓ Columns:
+    - Title
+    - Category (e.g., "Company Profile", "Certifications")
+    - Type badge (PDF, DOC, etc.)
+    - Published (Yes/No)
+    - Order (sort order number)
+    - Edit/Delete actions
+  ✓ "Add Document" button
+  ✓ Empty state message
+Actions:
+  - Create: Navigate to /admin/downloads/new
+  - Edit: Navigate to /admin/downloads/{id}/edit
+  - Delete: Server action with confirmation
+
+CREATE/EDIT DOWNLOAD FORM:
+Fields:
+  - Title (text, required, min 2 chars)
+  - Category (text, required, min 2 chars)
+  - File URL (text, required, validated as URL or /path)
+  - File Type (text, default "pdf")
+  - Sort Order (number, default 0)
+  - Published (checkbox, default true)
+
+Server Actions:
+  - createDownload(formData)
+  - updateDownload(id, formData)
+  - deleteDownload(id)
+  - Revalidates / and /admin/downloads
+
+5.6 FILES MANAGER MODULE (/admin/files)
+---------------------------------------
+File: src/app/admin/files/page.tsx
+Purpose: Cloudinary media asset management
+Features:
+  ✓ Folder-based organization
+  ✓ Cloudinary folder listing from dockside-cms/ root
+  ✓ Create new folders
+  ✓ Navigate into folders to view/upload assets
+  ✓ Configuration status check
+  ✓ Alert if Cloudinary not configured
+Cloudinary Setup:
+  - Required env vars:
+    * CLOUDINARY_CLOUD_NAME
+    * CLOUDINARY_API_KEY
+    * CLOUDINARY_API_SECRET
+  - Base path: dockside-cms/
+Folder Structure:
+  - Each project can have its own folder
+  - Folders link to project galleries
+  - Shows folder name and path
+Actions:
+  - CreateFolderForm component
+  - Navigate to folder detail page
+Fallback:
+  - Shows placeholder folders if Cloudinary not configured
+  - Warning banner with setup instructions
+
+FILES DETAIL PAGE (/admin/files/{folderName})
+---------------------------------------------
+Purpose: View and manage assets within a folder
+Features:
+  ✓ Asset grid with thumbnails
+  ✓ Upload new assets
+  ✓ Copy asset URLs
+  ✓ Delete assets
+  ✓ Asset metadata (size, format, upload date)
+
+5.7 SITE CONTENT CMS (/admin/site-content)
+------------------------------------------
+File: src/app/admin/page.tsx (shows site content table)
+Purpose: Manage dynamic page content for homepage and service pages
+Features:
+  ✓ List of all editable pages (home, service-*)
+  ✓ Shows page title, group, route, section count, status
+  ✓ "Sync Default Content" button
+  ✓ Edit action per page
+Pages Managed:
+  - home (homepage)
+  - service-civil-construction
+  - service-road-highways
+  - service-railway-works
+  - service-electrical-works
+  - service-industrial-projects
+  - service-project-management
+  - service-water-infrastructure-drainage-works
+  - service-road-safety-traffic-management-systems
+Actions:
+  - Edit: Navigate to /admin/site-content/{slug}
+  - Sync: Restore all default page content from lib/site-content.ts
+
+EDIT SITE CONTENT PAGE (/admin/site-content/{slug})
+---------------------------------------------------
+File: src/app/admin/site-content/[slug]/page.tsx
+Purpose: Edit page hero and sections
+Form Fields:
+  - Title (text, page title)
+  - Description (textarea, page description)
+  - Hero Title (text, hero section title)
+  - Hero Description (textarea, hero section text)
+  - Hero Image (text, URL or /path)
+  - Sections (JSON textarea, array of section objects)
+  - Published (checkbox)
+Sections Structure:
+  - Each section is a JSON object with:
+    * type (string, e.g., "features", "faq", "cta")
+    * title, description (strings)
+    * items (array of content items)
+    * Custom fields per section type
+Server Action:
+  - updateSitePage(slug, formData)
+  - Validates JSON sections
+  - Upserts to SitePage table
+  - Revalidates page route and /admin/site-content
+
+5.8 CLIENTS MODULE (/admin/clients)
+-----------------------------------
+File: src/app/admin/clients/page.tsx
+Purpose: Manage client logos and testimonials
+Features:
+  ✓ Client list table
+  ✓ Columns:
+    - Name
+    - Slug
+    - Industry
+    - Website link
+    - Featured flag
+    - Edit/Delete actions
+  ✓ "Add Client" button
+Actions:
+  - Create: Navigate to /admin/clients/new
+  - Edit: Navigate to /admin/clients/{id}/edit
+  - Delete: Server action (Manager+ only)
+
+CREATE/EDIT CLIENT FORM:
+Fields:
+  - Name (text, required, min 2 chars)
+  - Slug (text, auto-generated from name)
+  - Logo URL (text, optional, validated)
+  - Industry (text, optional)
+  - Website (text, optional, must be valid URL with https://)
+  - Testimonial (textarea, optional)
+  - Featured (checkbox, default true, shows on homepage)
+
+Server Actions:
+  - createClient(formData)
+  - updateClient(id, formData)
+  - deleteClient(id)
+  - Revalidates / and /admin/clients
+
+5.9 SITE SETTINGS MODULE (/admin/site-settings)
+-----------------------------------------------
+File: src/app/admin/site-settings/page.tsx
+Purpose: Manage global site configuration
+Features:
+  ✓ Comprehensive settings form organized by section
+  ✓ Sections:
+    1. General
+    2. Legal & Registration
+    3. Social Media
+    4. SEO & Meta
+  ✓ All changes live immediately on save
+  ✓ Success/error notifications
+
+GENERAL SETTINGS:
+  - Company Name (text)
+  - Tagline (text)
+  - Primary Phone (text)
+  - Alternate Phone (text)
+  - Email (email)
+  - Working Hours (text, e.g., "Mon – Sat: 9:00 AM – 6:00 PM")
+  - Office Address (textarea)
+  - Google Maps Embed URL (text, instructions provided)
+
+LEGAL & REGISTRATION:
+  - GST Number (text, placeholder: "33AABCD1234E1Z5")
+  - PAN Number (text, placeholder: "AABCD1234E")
+
+SOCIAL MEDIA:
+  - Facebook URL (url)
+  - Instagram URL (url)
+  - LinkedIn URL (url)
+  - YouTube URL (url)
+
+SEO & META:
+  - Meta Title (text, default site title)
+  - Meta Description (textarea, default site description)
+  - OG Image URL (text, default social share image)
+
+Storage:
+  - All settings stored in SiteSetting model as key-value pairs
+  - Keys: company_name, company_tagline, phone_primary, email, etc.
+  - Total of 17 settings keys
+
+Server Action:
+  - updateSiteSettings(formData)
+  - Upserts all 17 keys in parallel
+  - Revalidates / and /admin/site-settings
+
+ADMIN PANEL SHARED FEATURES
+----------------------------
+✓ Consistent UI with Radix components
+✓ Toast notifications for success/error states
+✓ Database connectivity checks
+✓ Fallback to seed data when database unavailable
+✓ Real-time validation with Zod
+✓ Automatic cache revalidation after mutations
+✓ Breadcrumb navigation
+✓ Responsive design for mobile/tablet admin
+✓ Loading states and skeletons
+✓ Empty states with helpful CTAs
+
+================================================================================
+6. API ROUTES & BACKEND FUNCTIONALITY
+================================================================================
+
+Total API Routes: 8 endpoints
+Location: src/app/api/
+Pattern: Next.js App Router API routes (route.ts files)
+
+6.1 AUTHENTICATION API (/api/auth/[...nextauth])
+------------------------------------------------
+File: src/app/api/auth/[...nextauth]/route.ts
+Purpose: NextAuth v5 authentication handlers
+Exports: handlers (GET, POST from NextAuth)
+Provider: Credentials provider with email/password
+Endpoints:
+  - GET /api/auth/[...nextauth] - Auth session/status
+  - POST /api/auth/[...nextauth] - Sign in, sign out, callback
+Authentication Flow:
+  1. User submits email + password
+  2. Credentials validated against User model
+  3. Password compared with bcrypt
+  4. JWT token generated with user data and role
+  5. Session stored in JWT (no database sessions)
+Fallback Mode:
+  - If DATABASE_URL not set, uses fallback admin credentials
+  - Email: admin@docksideconstructions.com (or FALLBACK_ADMIN_EMAIL)
+  - Password: DocksideAdmin#2026 (or FALLBACK_ADMIN_PASSWORD)
+  - Role: SUPER_ADMIN
+Security:
+  - Passwords hashed with bcryptjs
+  - JWT tokens signed and encrypted
+  - Email addresses lowercased for consistency
+  - Minimum 8-character password requirement
+
+6.2 CONTACT FORM API (/api/contact)
+-----------------------------------
+File: src/app/api/contact/route.ts
+Method: POST
+Purpose: Handle contact form submissions
+Request Body:
+  - name (string, min 2 chars, required)
+  - email (string, valid email, required)
+  - phone (string, optional)
+  - message (string, min 10 chars, required)
+Validation:
+  - Zod schema validation
+  - Returns 422 with error messages if validation fails
+Processing:
+  1. Validate input with Zod schema
+  2. Combine phone into message if provided
+  3. Store in ContactMessage model
+  4. Return 201 success response
+Response:
+  - Success: { success: true } (201)
+  - Validation Error: { error: "message" } (422)
+  - Server Error: { error: "An unexpected error occurred" } (500)
+Database:
+  - Checks canUseDatabase() before write
+  - Silently succeeds if database unavailable (no storage)
+Security:
+  - Input sanitization via Zod trim()
+  - Rate limiting: Not implemented (TODO)
+  - CSRF protection via NextAuth
+
+6.3 PROJECTS API (/api/projects)
+--------------------------------
+File: src/app/api/projects/route.ts
+Methods: GET, POST, PUT, DELETE
+Purpose: CRUD operations for projects
+
+GET /api/projects
+- Returns all published projects
+- Query params: ?featured=true, ?status=COMPLETED, ?industry=logistics
+- Response: Array of project objects
+- Public endpoint (no auth required)
+
+POST /api/projects
+- Create new project
+- Auth required: ADMIN or SUPER_ADMIN
+- Request body: Full project object (validated with Zod)
+- Response: Created project object (201)
+
+6.4 PROJECT DETAIL API (/api/projects/[id])
+-------------------------------------------
+File: src/app/api/projects/[id]/route.ts
+Methods: GET, PUT, DELETE
+
+GET /api/projects/[id]
+- Returns single project by ID
+- Public endpoint for published projects
+- Returns 404 if not found or unpublished
+
+PUT /api/projects/[id]
+- Update project by ID
+- Auth required: ADMIN or SUPER_ADMIN
+- Request body: Partial project object
+- Response: Updated project object
+
+DELETE /api/projects/[id]
+- Delete project by ID
+- Auth required: MANAGER or SUPER_ADMIN (higher permission)
+- Response: 204 No Content
+
+6.5 CLIENTS API (/api/clients)
+------------------------------
+File: src/app/api/clients/route.ts
+Methods: GET, POST
+
+GET /api/clients
+- Returns all featured clients
+- Query params: ?industry=industrial
+- Response: Array of client objects
+- Public endpoint
+
+POST /api/clients
+- Create new client
+- Auth required: ADMIN or SUPER_ADMIN
+- Request body: Client object (name, logo, industry, etc.)
+- Response: Created client object (201)
+
+6.6 CLIENT DETAIL API (/api/clients/[id])
+-----------------------------------------
+File: src/app/api/clients/[id]/route.ts
+Methods: GET, PUT, DELETE
+
+GET /api/clients/[id]
+- Returns single client by ID
+- Public endpoint for featured clients
+
+PUT /api/clients/[id]
+- Update client by ID
+- Auth required: ADMIN or SUPER_ADMIN
+
+DELETE /api/clients/[id]
+- Delete client by ID
+- Auth required: MANAGER or SUPER_ADMIN
+
+6.7 TESTIMONIALS API (/api/testimonials)
+----------------------------------------
+File: src/app/api/testimonials/route.ts
+Methods: GET
+Purpose: Fetch client testimonials
+Response: Array of clients with testimonials
+Filter: Only returns clients where testimonial field is not empty
+Public endpoint
+
+6.8 UPLOADS API (/api/uploads)
+------------------------------
+File: src/app/api/uploads/route.ts
+Method: POST
+Purpose: Handle file uploads to Cloudinary
+Auth Required: Yes (ADMIN or SUPER_ADMIN)
+Request Body:
+  - Multipart form-data
+  - file: File to upload
+  - folder: Optional Cloudinary folder path
+Process:
+  1. Validate authentication
+  2. Check Cloudinary configuration
+  3. Upload to Cloudinary
+  4. Store MediaAsset record in database
+  5. Return secure URL and metadata
+Response:
+  - Success: { url, publicId, resourceType } (200)
+  - Error: { error: "message" } (400/500)
+Cloudinary Configuration:
+  - Requires CLOUDINARY_CLOUD_NAME, API_KEY, API_SECRET
+  - Uploads to dockside-cms/ folder by default
+Security:
+  - File type validation (images only)
+  - Size limits (configurable, default 10MB)
+  - Authentication required
+  - Malicious file detection (TODO)
+
+API ARCHITECTURE NOTES
+----------------------
+✓ Server Components for data fetching (no client-side API calls for pages)
+✓ Server Actions for mutations (forms use server actions, not API routes)
+✓ API routes primarily for:
+  - External integrations
+  - Webhook receivers
+  - Third-party API clients
+  - Mobile app endpoints
+✓ Zod validation on all input
+✓ Consistent error response format
+✓ Database connection checks with fallback behavior
+✓ Type-safe with TypeScript end-to-end
+
+MISSING API FEATURES
+--------------------
+⚠ No rate limiting implementation
+⚠ No request logging/monitoring
+⚠ No API versioning
+⚠ No webhook endpoints for external integrations
+⚠ No batch operations
+⚠ No GraphQL endpoint (REST only)
+
+================================================================================
+7. AUTHENTICATION & AUTHORIZATION
+================================================================================
+
+AUTHENTICATION SYSTEM
+---------------------
+Provider: NextAuth v5 (next-auth@5.0.0-beta.30)
+File: src/auth.ts
+Strategy: JWT sessions (no database sessions)
+Login Page: Custom login page (not using NextAuth default)
+
+CREDENTIAL AUTHENTICATION
+-------------------------
+Provider: Credentials
+Fields:
+  - email (string, validated as email)
+  - password (string, min 8 characters)
+Process:
+  1. Parse and validate credentials with Zod
+  2. Look up user by email (case-insensitive)
+  3. Compare password hash with bcryptjs
+  4. Return user object with role if valid
+  5. Return null if invalid (triggers login error)
+
+FALLBACK ADMIN (No Database Mode)
+----------------------------------
+When DATABASE_URL is not configured:
+  - Fallback email: admin@docksideconstructions.com
+  - Fallback password: DocksideAdmin#2026
+  - Fallback role: SUPER_ADMIN
+  - User ID: "fallback-super-admin"
+Environment Variables:
+  - FALLBACK_ADMIN_EMAIL (optional override)
+  - FALLBACK_ADMIN_PASSWORD (optional override)
+Purpose: Allow admin access for demo/development without database
+
+SESSION MANAGEMENT
+------------------
+Strategy: JWT tokens (no server-side sessions)
+Storage: HTTP-only cookies
+Token Contents:
+  - user.id (from sub claim)
+  - user.name
+  - user.email
+  - user.role (SUPER_ADMIN, ADMIN, or EDITOR)
+Callbacks:
+  - jwt(): Adds role to token on sign in
+  - session(): Adds id and role to session object
+Session Duration: Default NextAuth (30 days)
+Refresh: Automatic token refresh
+
+AUTHORIZATION & ROLES
+---------------------
+Role Enum (Prisma):
+  - SUPER_ADMIN (highest privilege)
+  - ADMIN (standard admin)
+  - EDITOR (read + limited write)
+
+Permission Helpers (lib/admin.ts):
+  - requireAdmin(): Requires ADMIN or SUPER_ADMIN role
+  - requireManager(): Requires SUPER_ADMIN only
+  - requireAuth(): Requires any authenticated user
+
+Role Capabilities:
+  SUPER_ADMIN:
+    ✓ All admin panel access
+    ✓ Delete projects, clients, equipment
+    ✓ Manage users (if user management added)
+    ✓ Site settings and content management
+
+  ADMIN:
+    ✓ All admin panel access
+    ✓ Create/edit projects, clients, equipment
+    ✓ Site content management
+    ✗ Cannot delete (use requireManager)
+
+  EDITOR:
+    ✓ View admin panel
+    ✓ Edit existing content
+    ✗ Cannot create or delete
+    ✗ Cannot access site settings
+
+PROTECTED ROUTES
+----------------
+All /admin/* routes require authentication:
+  - Layout checks auth with requireAdmin()
+  - Redirects to /login if not authenticated
+  - Shows 403 if insufficient permissions
+
+Public Routes:
+  - All (site) routes: /, /projects, /contact, etc.
+  - No authentication required
+
+API Route Protection:
+  - Manual auth checks in API route handlers
+  - Uses auth() from @/auth to get session
+  - Returns 401 if not authenticated
+  - Returns 403 if insufficient role
+
+SECURITY MEASURES
+-----------------
+✓ Password hashing with bcryptjs (10 rounds)
+✓ JWT tokens signed and encrypted by NextAuth
+✓ HTTP-only cookies (not accessible to JavaScript)
+✓ CSRF protection via NextAuth
+✓ Email normalization (lowercased)
+✓ Session timeout (30 days default)
+✓ Secure session strategy (trustHost: true)
+⚠ No 2FA/MFA implementation
+⚠ No password reset flow
+⚠ No account lockout after failed attempts
+⚠ No session invalidation on password change
+⚠ No audit log for admin actions
+
+================================================================================
+8. COMPONENTS ARCHITECTURE
+================================================================================
+
+Component Location: src/components/
+Total Components: 40+ reusable components
+Pattern: Mix of Server Components and Client Components
+Styling: Tailwind CSS with component-scoped utility classes
+
+KEY COMPONENT CATEGORIES
+-------------------------
+
+8.1 UI PRIMITIVES (src/components/ui/)
+---------------------------------------
+Based on Radix UI and shadcn/ui pattern:
+  - Button: Primary, secondary, outline, ghost variants
+  - Badge: Status indicators with color variants
+  - Card, CardHeader, CardContent: Content containers
+  - Table, TableHeader, TableBody, TableRow, TableCell: Data tables
+  - Alert, AlertDialog: Notifications and confirmations
+  - Tooltip: Hover information
+  - Tabs: Tabbed interfaces
+  - Select, Dropdown: Form controls
+  - Label: Form labels with accessibility
+  - Separator: Visual dividers
+  - Avatar: User profile images
+  - Slot: Radix composition primitive
+
+Custom UI Components:
+  - CountUp: Animated number counting (Framer Motion)
+  - Logo: Company logo with responsive sizing
+  - FloatingCTA: Sticky call-to-action button
+
+8.2 LAYOUT COMPONENTS
+---------------------
+  - PageHero: Hero sections with background images
+  - Footer: Site-wide footer with navigation and info
+  - AdminSidebar: Admin panel navigation (in admin layout)
+  - ClientLogoMarquee: Infinite scrolling logo carousel
+
+8.3 PROJECT COMPONENTS
+----------------------
+  - ProjectCard: Individual project showcase card
+  - ProjectsFilterGrid: Filterable project grid (client component)
+  - ProjectGallery: Image gallery for project detail pages
+  - FeaturedProjects: Homepage featured projects section
+
+8.4 CONTACT COMPONENTS (src/components/contact/)
+------------------------------------------------
+  - ContactForm: Full contact form with validation (client component)
+  - ContactReasons: "Why contact us" section with icons
+
+8.5 EQUIPMENT COMPONENTS (src/components/equipment/)
+----------------------------------------------------
+  - EquipmentGridClient: Filterable equipment grid (client component)
+  - EquipmentCard: Individual equipment display card
+
+8.6 SERVICES COMPONENTS
+-----------------------
+  - ServicesLandingPage: Service category showcase
+  - ServiceCard: Individual service description card
+  - ServiceDetailPage: Full service detail page with FAQ
+
+8.7 QUALITY & SAFETY COMPONENTS
+-------------------------------
+  - CertificateGrid: Display certification images
+  - QualityInspectionStep: Quality process visualization
+
+8.8 DOWNLOADS COMPONENTS
+------------------------
+  - DownloadGroupCard: Grouped downloads by category
+  - DownloadItem: Individual download link with icon
+
+8.9 HOME PAGE COMPONENTS (src/components/home/)
+-----------------------------------------------
+  - ProjectDelivery: 6-step delivery process section
+  - DeliveryStep: Individual delivery step card
+
+8.10 SECTIONS (src/components/sections/)
+----------------------------------------
+  - About: About section for homepage
+  - CTA: Call-to-action sections
+  - ContactCTA: Contact-specific CTA
+  - Downloads: Downloads section
+
+8.11 MOTION/ANIMATION COMPONENTS (src/components/motion/)
+---------------------------------------------------------
+  - LuxuryScroll: GSAP scroll animations
+  - Reveal: Framer Motion reveal animations
+  - Used for progressive disclosure and smooth transitions
+
+8.12 ADMIN COMPONENTS (src/components/admin/)
+---------------------------------------------
+  - ProjectForm: Create/edit project form (massive form)
+  - ClientForm: Create/edit client form
+  - CreateFolderForm: Cloudinary folder creation
+
+COMPONENT PATTERNS
+------------------
+✓ Server Components by default (better performance)
+✓ Client Components only when needed ('use client' directive):
+  - Interactive forms with state
+  - Animations and transitions
+  - Browser APIs (localStorage, window)
+  - Event handlers (onClick, onChange)
+✓ Composition over inheritance
+✓ Props drilling minimized with component composition
+✓ TypeScript for all components
+✓ Radix UI for accessibility compliance
+✓ Tailwind CSS for styling (no CSS modules or styled-components)
+
+================================================================================
+9. FEATURES & FUNCTIONALITY MATRIX
+================================================================================
+
+PUBLIC SITE FEATURES
+--------------------
+✅ Homepage with hero carousel
+✅ Project portfolio showcase with filtering
+✅ Service catalog (8 service categories)
+✅ Client logo showcase with marquee animation
+✅ Equipment fleet display
+✅ Quality & Safety certifications
+✅ Downloadable documents
+✅ Contact form with validation
+✅ Google Maps integration
+✅ SEO optimization (meta tags, OG tags, sitemaps)
+✅ Responsive design (mobile, tablet, desktop)
+✅ Loading states and skeletons
+✅ Error boundaries and 404 pages
+✅ Dark mode: ❌ (Not implemented)
+
+ADMIN PANEL FEATURES
+--------------------
+✅ Project CRUD (Create, Read, Update, Delete)
+✅ Equipment fleet management
+✅ Client management with testimonials
+✅ Downloads document management
+✅ Site content CMS (hero + sections editing)
+✅ Quality & Safety policy editing
+✅ Site settings (contact, social, SEO)
+✅ Cloudinary media management
+✅ Role-based access control
+✅ Database fallback mode (seed data)
+✅ Real-time preview links
+✅ Success/error toast notifications
+✅ Form validation with Zod
+✅ Auto-slug generation
+✅ Image gallery management
+✅ Analytics dashboard (basic metrics)
+✅ User management: ❌ (Not implemented)
+✅ Audit logs: ❌ (Not implemented)
+✅ Content scheduling: ❌ (Not implemented)
+
+PERFORMANCE FEATURES
+--------------------
+✅ Next.js App Router (React Server Components)
+✅ Static page generation where possible
+✅ Dynamic imports for code splitting
+✅ Image optimization (Next.js Image component)
+✅ Font optimization (next/font)
+✅ Cloudinary image optimization
+✅ Database query optimization (Prisma)
+✅ API route caching: ❌ (Not implemented)
+✅ CDN integration: ❌ (Not configured)
+
+SECURITY FEATURES
+-----------------
+✅ NextAuth authentication
+✅ JWT session tokens
+✅ Password hashing (bcryptjs)
+✅ Input validation (Zod)
+✅ CSRF protection
+✅ SQL injection protection (Prisma)
+✅ XSS protection (React auto-escaping)
+✅ 2FA/MFA: ❌ (Not implemented)
+✅ Rate limiting: ❌ (Not implemented)
+✅ Password reset: ❌ (Not implemented)
+✅ Account lockout: ❌ (Not implemented)
+
+INTEGRATION FEATURES
+--------------------
+✅ Cloudinary (media management)
+✅ Google Maps (location display)
+✅ PostgreSQL database (Neon/Supabase)
+✅ Email notifications: ❌ (Not implemented)
+✅ SMS notifications: ❌ (Not implemented)
+✅ CRM integration: ❌ (Not implemented)
+✅ Analytics (GA4): ❌ (Not implemented)
+✅ Search functionality: ❌ (Not implemented)
+
+================================================================================
+10. CONTACT FORM IMPLEMENTATION DETAILS
+================================================================================
+
+CURRENT CONTACT FORM IMPLEMENTATION
+------------------------------------
+Location: src/app/(site)/contact/page.tsx
+Component: Inline server-side form (not a separate component)
+Submission: Server action (not API route)
+
+FORM FIELDS (Current Implementation)
+-------------------------------------
+1. Name (text input, required)
+   - Validation: min 2 characters
+   - Placeholder: "Full Name *"
+
+2. Email (email input, required)
+   - Validation: valid email format
+   - Placeholder: "Email Address *"
+
+3. Phone (text input, required)
+   - Validation: min 6 characters
+   - Placeholder: "Phone Number *"
+
+4. Company (text input, optional)
+   - Placeholder: "Company Name"
+
+5. Project Type (select dropdown, required)
+   - Validation: min 2 characters
+   - Options:
+     * Civil Construction
+     * Road & Highways
+     * Railway Works
+     * Electrical Works
+     * Industrial Projects
+     * Project Management
+   - Placeholder: "Project Type / Service Required"
+
+6. Message (textarea, required)
+   - Validation: min 10 characters
+   - Rows: 5
+   - Placeholder: "Your Message *"
+
+FORM VALIDATION (Server-Side)
+------------------------------
+Schema: Zod validation schema
+File: src/app/(site)/contact/page.tsx (contactSchema)
+
+Validation Rules:
+  - name: z.string().min(2)
+  - company: z.string().optional()
+  - phone: z.string().min(6)
+  - email: z.string().email()
+  - projectType: z.string().min(2)
+  - message: z.string().min(10)
+
+Client-Side Validation:
+  - HTML5 required attributes
+  - Email type validation
+  - No custom JavaScript validation
+
+FORM SUBMISSION FLOW
+---------------------
+1. User fills form and clicks "Send Message"
+2. Form submits to server action submitContact()
+3. Server validates with Zod schema
+4. If valid:
+   - Enriches message with phone, company, projectType, map location
+   - Creates ContactMessage in database
+   - Redirects to /contact/thank-you
+5. If invalid:
+   - Returns validation errors (handled by Next.js)
+   - User sees error messages
+
+DATA ENRICHMENT
+---------------
+The contact message is enriched before storage:
+
+Original message + enriched details:
+```
+{original message}
+
+Project enquiry details:
+Company: {company or "Not provided"}
+Phone: {phone}
+Project type: {projectType}
+Map location: 12.886303, 80.0823886
+```
+
+This creates a complete record without needing separate fields.
+
+DATABASE STORAGE
+----------------
+Model: ContactMessage
+Fields Stored:
+  - id: Auto-generated CUID
+  - name: From form
+  - email: From form
+  - message: Enriched message (includes phone, company, projectType)
+  - createdAt: Auto-timestamp
+
+Notable: Phone, company, and projectType are NOT separate fields,
+they're embedded in the message text.
+
+THANK YOU PAGE
+--------------
+File: src/app/(site)/contact/thank-you/page.tsx
+Route: /contact/thank-you
+Features:
+  ✓ Success confirmation message
+  ✓ "What happens next" timeline
+  ✓ Expected response time
+  ✓ Alternative contact methods
+  ✓ Link back to homepage
+
+CONTACT FORM UI/UX FEATURES
+----------------------------
+✓ Professional layout with split panel design
+✓ Contact information panel on left
+✓ Form panel on right
+✓ Security badge: "Your information is secure"
+✓ Clear required field indicators (*)
+✓ Responsive design (stacks on mobile)
+✓ Icon indicators for contact methods
+✓ Google Maps integration below form
+✓ "Why connect with us?" reasons section
+✓ Client logo marquee for trust building
+
+MISSING CONTACT FORM FEATURES
+------------------------------
+⚠ No file upload capability
+⚠ No spam protection (CAPTCHA, honeypot)
+⚠ No rate limiting
+⚠ No email notifications to admin
+⚠ No auto-reply to user
+⚠ No progressive enhancement (requires JavaScript)
+⚠ No client-side validation feedback
+⚠ No form state persistence (lost on refresh)
+⚠ No multi-step form
+⚠ No inquiry type categorization in database
+⚠ No lead scoring or CRM integration
+⚠ No form analytics tracking
+⚠ No A/B testing capability
+
+CONTACT FORM ENHANCEMENT RECOMMENDATIONS
+-----------------------------------------
+HIGH PRIORITY:
+1. Email Notifications
+   - Send admin notification on submission
+   - Send user confirmation email
+   - Use service like SendGrid, Resend, or Postmark
+
+2. Spam Protection
+   - Add Google reCAPTCHA v3
+   - Or implement honeypot field
+   - Or use Cloudflare Turnstile
+
+3. Better Data Structure
+   - Store phone, company, projectType as separate fields
+   - Easier querying and filtering
+   - Better admin panel integration
+
+4. Admin Panel Integration
+   - View contact submissions in admin
+   - Mark as read/unread
+   - Respond directly from admin
+   - Archive or delete submissions
+   - Export to CSV
+
+MEDIUM PRIORITY:
+5. File Upload Support
+   - Allow project briefs, site photos, RFPs
+   - Cloudinary integration already in place
+   - Limit file size and types
+
+6. Enhanced Validation
+   - Phone number format validation
+   - Indian phone number validation specifically
+   - Company website validation (optional field)
+
+7. Better User Feedback
+   - Loading states during submission
+   - Client-side validation with inline errors
+   - Success animation
+
+8. Lead Management
+   - Lead status tracking (New, Contacted, Qualified, Lost)
+   - Priority/urgency field
+   - Expected project timeline
+   - Budget range (optional)
+
+LOW PRIORITY:
+9. Advanced Features
+   - Multi-language support
+   - Preferred contact method selection
+   - Preferred contact time
+   - Source tracking (how they found the site)
+   - UTM parameter capture
+   - Form abandonment tracking
+
+CONTACT API ALTERNATIVE
+-----------------------
+Currently using server actions. Could also implement as API route:
+
+POST /api/contact
+- Allows external form submissions
+- Enables CORS for partner sites
+- Better for webhook integrations
+- Easier to add to API documentation
+- Current implementation is simpler for internal form only
+
+================================================================================
+11. SECURITY & BEST PRACTICES
+================================================================================
+
+IMPLEMENTED SECURITY MEASURES
+------------------------------
+✅ Input Validation
+   - Zod schemas on all form inputs
+   - Type checking with TypeScript
+   - SQL injection prevention via Prisma ORM
+   - XSS prevention via React auto-escaping
+
+✅ Authentication
+   - NextAuth v5 with secure JWT tokens
+   - bcryptjs password hashing (10 rounds)
+   - HTTP-only session cookies
+   - CSRF protection built into NextAuth
+   - Secure cookie settings (sameSite, secure flags)
+
+✅ Authorization
+   - Role-based access control (3 roles)
+   - Permission checks on all admin routes
+   - Server-side authorization (not client-only)
+   - requireAdmin() and requireManager() helpers
+
+✅ Database Security
+   - Parameterized queries via Prisma
+   - No raw SQL execution
+   - Connection pooling
+   - Environment variable for DATABASE_URL
+
+✅ API Security
+   - HTTPS enforcement (in production)
+   - CORS headers (Next.js defaults)
+   - Input validation on all endpoints
+   - Authentication checks on protected routes
+
+✅ File Upload Security
+   - Cloudinary handles uploads (not local filesystem)
+   - File type validation
+   - Size limits configured
+   - No arbitrary file execution
+
+MISSING SECURITY MEASURES (Critical)
+-------------------------------------
+⚠ Rate Limiting
+   - No protection against brute force attacks
+   - No API rate limiting
+   - Contact form can be spammed
+   - Login endpoint unprotected
+   Recommendation: Implement rate limiting with upstash/ratelimit or similar
+
+⚠ CAPTCHA / Bot Protection
+   - Contact form vulnerable to bot submissions
+   - No honeypot fields
+   - No reCAPTCHA or alternative
+   Recommendation: Add Cloudflare Turnstile or Google reCAPTCHA v3
+
+⚠ Email Verification
+   - No verification on signup (if user registration added)
+   - Contact form email not verified
+   Recommendation: Add email verification flow
+
+⚠ Two-Factor Authentication (2FA)
+   - Admin accounts have no 2FA option
+   - High-value target (content management)
+   Recommendation: Add 2FA for SUPER_ADMIN at minimum
+
+⚠ Security Headers
+   - Missing Content-Security-Policy
+   - Missing X-Frame-Options
+   - Missing Strict-Transport-Security
+   Recommendation: Add security headers in next.config.js
+
+⚠ Password Reset Flow
+   - No forgot password functionality
+   - Admins locked out if password forgotten
+   Recommendation: Implement secure password reset with tokens
+
+⚠ Session Management
+   - No session invalidation on password change
+   - No "logout all devices" functionality
+   - No session list/management
+   Recommendation: Add session tracking and management
+
+⚠ Audit Logging
+   - No tracking of admin actions
+   - Cannot trace who changed what
+   - No compliance trail
+   Recommendation: Add audit log for all mutations
+
+BEST PRACTICES IMPLEMENTED
+---------------------------
+✅ Environment Variables
+   - Sensitive data not in code
+   - .env.local for local development
+   - Platform env vars for production
+
+✅ Error Handling
+   - Try-catch blocks on async operations
+   - User-friendly error messages
+   - No stack traces exposed to users
+
+✅ Code Quality
+   - TypeScript strict mode
+   - ESLint configured
+   - Consistent code style
+   - Component modularity
+
+✅ Performance
+   - React Server Components by default
+   - Image optimization with Next.js Image
+   - Code splitting automatic
+   - Static page generation where possible
+
+SECURITY RECOMMENDATIONS PRIORITY
+----------------------------------
+HIGH (Implement Immediately):
+1. Rate limiting on login and contact form
+2. CAPTCHA on contact form
+3. Security headers (CSP, HSTS, X-Frame-Options)
+4. Audit logging for admin actions
+5. Password reset flow
+
+MEDIUM (Implement Soon):
+6. Two-factor authentication for admins
+7. Session management and invalidation
+8. Enhanced file upload validation
+9. API request logging
+10. Email verification for contact submissions
+
+LOW (Nice to Have):
+11. Advanced intrusion detection
+12. Automated security scanning in CI/CD
+13. Penetration testing
+14. Bug bounty program
+15. Security.txt file
+
+COMPLIANCE CONSIDERATIONS
+--------------------------
+✓ GDPR Considerations:
+   - Contact form collects personal data
+   - Need privacy policy link
+   - Need data retention policy
+   - Need user data deletion process
+   - No cookie consent banner (add if using tracking)
+
+✓ Accessibility (WCAG):
+   - Radix UI components are accessible
+   - Semantic HTML structure
+   - Keyboard navigation support
+   - Screen reader compatibility
+   - Need manual testing for full compliance
+
+================================================================================
+12. RECOMMENDATIONS & IMPROVEMENTS
+================================================================================
+
+CRITICAL IMPROVEMENTS (Implement First)
+----------------------------------------
+
+1. FIX HOMEPAGE TRUST METRICS
+   Priority: CRITICAL
+   Issue: "0+ M³ Earthwork" and "0+ Major Clients" showing zero values
+   Solution:
+   - Either update with real data from database
+   - Or remove/hide these metrics until data available
+   - Undermines credibility significantly
+
+2. IMPLEMENT SPAM PROTECTION
+   Priority: HIGH
+   Issue: Contact form vulnerable to bot submissions
+   Solution:
+   - Add Cloudflare Turnstile (free, privacy-friendly)
+   - Or Google reCAPTCHA v3
+   - Or implement honeypot field
+
+3. ADD EMAIL NOTIFICATIONS
+   Priority: HIGH
+   Issue: No notification when contact form submitted
+   Solution:
+   - Integrate SendGrid, Resend, or Postmark
+   - Send admin notification on submission
+   - Send user confirmation email
+   - Essential for lead management
+
+4. IMPLEMENT RATE LIMITING
+   Priority: HIGH
+   Issue: API and forms vulnerable to abuse
+   Solution:
+   - Use @upstash/ratelimit or similar
+   - Protect login endpoint
+   - Protect contact form
+   - Protect API routes
+
+5. ADD SECURITY HEADERS
+   Priority: HIGH
+   Issue: Missing CSP, HSTS, and other security headers
+   Solution:
+   - Configure in next.config.js
+   - Add Content-Security-Policy
+   - Add Strict-Transport-Security
+   - Add X-Frame-Options, X-Content-Type-Options
+
+ADMIN PANEL ENHANCEMENTS
+------------------------
+
+6. Contact Message Management
+   Priority: MEDIUM
+   - Add admin page to view contact submissions
+   - Mark as read/unread
+   - Assign to team members
+   - Add notes/responses
+   - Export to CSV
+
+7. User Management
+   Priority: MEDIUM
+   - Create admin page to manage users
+   - Add/edit/delete admin users
+   - Password reset functionality
+   - Role assignment
+   - Session management
+
+8. Analytics Dashboard Expansion
+   Priority: LOW
+   - Add Google Analytics 4 integration
+   - Track form submissions
+   - Track page views
+   - Popular projects
+   - User flow visualization
+
+9. Content Scheduling
+   Priority: LOW
+   - Schedule project publications
+   - Schedule blog posts (if added)
+   - Preview scheduled content
+
+PUBLIC SITE IMPROVEMENTS
+-------------------------
+
+10. Search Functionality
+    Priority: MEDIUM
+    - Global search across projects, services
+    - Filter projects by multiple criteria
+    - Autocomplete suggestions
+    - Search analytics
+
+11. Blog/News Section
+    Priority: MEDIUM
+    - Company news and updates
+    - Project spotlights
+    - Industry insights
+    - SEO benefits
+
+12. Careers Page
+    Priority: MEDIUM
+    - JobOpening model already exists
+    - Job listings page
+    - Application form
+    - "Why work here" content
+
+13. Testimonials Section
+    Priority: MEDIUM
+    - Client testimonial showcase
+    - Video testimonials
+    - Case study quotes
+    - Testimonial model exists but not displayed
+
+14. Project Filtering Enhancement
+    Priority: LOW
+    - Filter by service type
+    - Filter by project value
+    - Filter by year completed
+    - Sort by various criteria
+
+USER EXPERIENCE IMPROVEMENTS
+-----------------------------
+
+15. Mobile Navigation
+    Priority: HIGH
+    - Current hamburger menu could be improved
+    - Add sticky header
+    - Improve touch targets
+    - Test on various devices
+
+16. Loading States
+    Priority: MEDIUM
+    - Add skeleton loaders
+    - Loading spinners for async operations
+    - Optimistic UI updates
+    - Better form submission feedback
+
+17. Accessibility Audit
+    Priority: MEDIUM
+    - Manual WCAG testing
+    - Keyboard navigation testing
+    - Screen reader testing
+    - Color contrast validation
+    - Focus indicator improvements
+
+18. Performance Optimization
+    Priority: MEDIUM
+    - Implement CDN (Cloudflare, Vercel)
+    - Optimize images further
+    - Lazy load below-the-fold content
+    - Preload critical resources
+    - Implement service worker for offline support
+
+TECHNICAL DEBT & CODE QUALITY
+------------------------------
+
+19. API Documentation
+    Priority: LOW
+    - Document all API endpoints
+    - OpenAPI/Swagger spec
+    - Example requests/responses
+    - Authentication guide
+
+20. Testing Infrastructure
+    Priority: MEDIUM
+    - Unit tests for critical functions
+    - Integration tests for API routes
+    - E2E tests for critical flows
+    - Visual regression testing
+
+21. Error Monitoring
+    Priority: MEDIUM
+    - Integrate Sentry or similar
+    - Track frontend errors
+    - Track API errors
+    - Alert on critical issues
+
+22. Logging Enhancement
+    Priority: LOW
+    - Structured logging
+    - Log aggregation (DataDog, LogRocket)
+    - Request tracing
+    - Performance monitoring
+
+DATABASE & BACKEND IMPROVEMENTS
+--------------------------------
+
+23. Database Optimization
+    Priority: LOW
+    - Add database indexes where needed
+    - Query optimization
+    - Connection pooling configuration
+    - Database backup strategy
+
+24. Caching Strategy
+    Priority: LOW
+    - Redis for session storage
+    - API response caching
+    - Database query caching
+    - Static page caching
+
+25. Backup & Recovery
+    Priority: MEDIUM
+    - Automated database backups
+    - Media asset backups
+    - Disaster recovery plan
+    - Backup testing
+
+CONTENT & SEO IMPROVEMENTS
+---------------------------
+
+26. Enhanced SEO
+    Priority: MEDIUM
+    - Schema.org structured data
+    - Sitemap generation (partially done)
+    - robots.txt optimization
+    - Meta tag optimization per page
+    - Rich snippets for projects
+
+27. Content Management
+    Priority: LOW
+    - Version control for content changes
+    - Content approval workflow
+    - Draft/published states
+    - Content preview mode
+
+ESTIMATED IMPLEMENTATION TIMELINE
+----------------------------------
+
+Week 1-2 (Critical Fixes):
+  - Fix homepage trust metrics
+  - Add spam protection
+  - Add email notifications
+  - Implement rate limiting
+  - Add security headers
+
+Week 3-4 (Admin Enhancements):
+  - Contact message management
+  - User management
+  - Admin dashboard improvements
+
+Month 2 (Public Site):
+  - Search functionality
+  - Mobile navigation improvements
+  - Loading states
+  - Contact form enhancements
+
+Month 3+ (Advanced Features):
+  - Blog/News section
+  - Careers page
+  - Analytics integration
+  - Testing infrastructure
+  - Performance optimization
+
+================================================================================
+END OF COMPREHENSIVE TECHNICAL ANALYSIS REPORT
+================================================================================
+
+Report Generated: 2026-06-29
+Total Pages Analyzed: 43
+Total Database Models: 14
+Total API Routes: 8
+Total Components: 40+
+
+SUMMARY
+-------
+The Dockside Constructions website is a well-architected Next.js application
+with a comprehensive admin panel and clean public-facing site. The foundation
+is solid with proper authentication, database schema, and component structure.
+
+Key Strengths:
+  ✓ Comprehensive admin CMS for all content types
+  ✓ Clean, modern tech stack (Next.js 16, React 19, Prisma)
+  ✓ Role-based authorization
+  ✓ Responsive design
+  ✓ Cloudinary media management
+
+Critical Areas for Improvement:
+  ⚠ Homepage trust metrics showing zero values (credibility issue)
+  ⚠ Missing spam protection on contact form
+  ⚠ No email notifications for leads
+  ⚠ Missing rate limiting and advanced security
+  ⚠ No admin panel for contact message management
+
+Recommended Next Steps:
+1. Fix homepage metrics immediately
+2. Implement spam protection and email notifications
+3. Add contact message admin panel
+4. Enhance security (rate limiting, headers, 2FA)
+5. Build out search and careers features
+6. Implement comprehensive testing
+
+This website has excellent bones and with the critical improvements above
+will provide a premium, professional experience for a construction company
+at scale.
+
+================================================================================

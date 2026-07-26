@@ -1,0 +1,92 @@
+[
+  {
+    "file": "hero-steel-frame-cranes.jpg",
+    "role": "Homepage hero",
+    "source": "https://images.pexels.com/photos/15532135/pexels-photo-15532135.jpeg?auto=compress&cs=tinysrgb&w=2400"
+  },
+  {
+    "file": "about-site-supervision.jpg",
+    "role": "About Dockside media",
+    "source": "https://images.pexels.com/photos/8961030/pexels-photo-8961030.jpeg?auto=compress&cs=tinysrgb&w=2000"
+  },
+  {
+    "file": "industry-manufacturing.jpg",
+    "role": "Manufacturing industry card",
+    "source": "https://images.pexels.com/photos/4883682/pexels-photo-4883682.jpeg?auto=compress&cs=tinysrgb&w=1800"
+  },
+  {
+    "file": "industry-warehousing.jpg",
+    "role": "Warehousing industry card",
+    "source": "https://images.pexels.com/photos/5156696/pexels-photo-5156696.jpeg?auto=compress&cs=tinysrgb&w=1800"
+  },
+  {
+    "file": "industry-logistics.jpg",
+    "role": "Logistics industry card",
+    "source": "https://images.pexels.com/photos/4481259/pexels-photo-4481259.jpeg?auto=compress&cs=tinysrgb&w=1800"
+  },
+  {
+    "file": "industry-commercial.jpg",
+    "role": "Commercial and campus civil works industry card",
+    "source": "https://images.pexels.com/photos/36669607/pexels-photo-36669607.jpeg?auto=compress&cs=tinysrgb&w=2200"
+  },
+  {
+    "file": "industry-utilities-substation.jpg",
+    "role": "Utilities industry card",
+    "source": "https://www.pexels.com/photo/high-voltage-power-distribution-substation-18468536/"
+  },
+  {
+    "file": "industry-industrial-parks.jpg",
+    "role": "Industrial parks industry card",
+    "source": "https://images.pexels.com/photos/37248695/pexels-photo-37248695.jpeg?auto=compress&cs=tinysrgb&w=2200"
+  },
+  {
+    "file": "industry-infrastructure.jpg",
+    "role": "Infrastructure industry card",
+    "source": "https://images.pexels.com/photos/14367425/pexels-photo-14367425.jpeg?auto=compress&cs=tinysrgb&w=1800"
+  },
+  {
+    "file": "industry-institutional-campus.jpg",
+    "role": "Institutional industry card",
+    "source": "https://images.pexels.com/photos/33591766/pexels-photo-33591766.jpeg?auto=compress&cs=tinysrgb&w=1600"
+  },
+  {
+    "file": "project-whirlpool.jpg",
+    "role": "Whirlpool featured project card",
+    "source": "https://images.pexels.com/photos/30411888/pexels-photo-30411888.jpeg?auto=compress&cs=tinysrgb&w=2200"
+  },
+  {
+    "file": "project-whirlpool-facility.jpg",
+    "role": "Whirlpool featured project card",
+    "source": "User-provided project image"
+  },
+  {
+    "file": "project-lodha.jpg",
+    "role": "Lodha featured project card",
+    "source": "https://www.lodhagroup.com/lodha-industrial-park/projects/commercial-property-in-chennai/lip-oragadam/gallery"
+  },
+  {
+    "file": "project-lodha-industrial-park.jpg",
+    "role": "Lodha featured project card",
+    "source": "https://www.lodhagroup.com/lodha-industrial-park/projects/commercial-property-in-chennai/lip-oragadam/gallery"
+  },
+  {
+    "file": "project-adani.jpg",
+    "role": "Adani featured project card",
+    "source": "https://www.adani.com/en/businesses/agri-logistics"
+  },
+  {
+    "file": "project-adani-logistics.jpg",
+    "role": "Adani featured project card",
+    "source": "https://www.adani.com/en/businesses/agri-logistics"
+  },
+  {
+    "file": "project-chennai-one.jpg",
+    "role": "Chennai One featured project card",
+    "source": "https://commons.wikimedia.org/wiki/File:Chennai_One_IT_Park_SEZ.jpg"
+  },
+  {
+    "file": "project-chennai-one-sez.jpg",
+    "role": "Chennai One featured project card",
+    "source": "https://commons.wikimedia.org/wiki/File:Chennai_One_IT_Park_SEZ.jpg"
+  }
+]

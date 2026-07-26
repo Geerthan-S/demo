@@ -1,0 +1,4 @@
+10248: .delivery-step:hover .connector-premium-flow-segment:nth-child(1) {
+10259: .delivery-step:hover .connector-premium-flow-segment:nth-child(2) {
+10270: .delivery-step:hover .connector-premium-flow-segment:nth-child(3) {
+10282: .delivery-step:hover .connector-premium-flow-arrow {

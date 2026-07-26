@@ -1,0 +1,106 @@
+@media (max-width: 760px) {
+  .industrial-nav {
+    min-height: 80px !important;
+  }
+
+@media (max-width: 760px) {
+  .cms-section {
+    width: min(100% - 28px, 1320px);
+  }
+
+@media (max-width: 760px) {
+  .trusted-by-strip>div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+@media (max-width: 760px) {
+  .premium-projects .premium-project-rail {
+    grid-template-columns: 1fr !important;
+  }
+
+@media (max-width: 760px) {
+
+  .trust-systems,
+  .trusted-by-strip,
+  .cms-section,
+  .premium-services,
+  .premium-projects {
+    padding-inline: 18px !important;
+  }
+
+@media (max-width: 760px) {
+  .industrial-nav {
+    min-height: 72px !important;
+  }
+
+@media (max-width: 760px) {
+  .premium-hero {
+    min-height: 768px !important;
+  }
+
+@media (max-width: 768px) {
+
+  .premium-hero,
+  .premium-page-hero,
+  .shot-subhero,
+  .about-premium-hero,
+  .services-hero {
+    min-height: 576px !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+@media (max-width: 768px) {
+  .services-why {
+    grid-template-columns: 1fr;
+    padding: 56px max(22px, calc((100vw - 1440px) / 2 + 22px));
+  }
+
+@media (max-width: 760px) {
+  .services-card-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+@media (max-width: 768px) {
+  .careers-hero-badges {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 16px;
+  }
+
+@media (max-width: 760px) {
+  .equipment-grid {
+    grid-template-columns: 1fr;
+  }
+
+@media (max-width: 768px) {
+  .contact-cta-section__inner {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+@media (max-width: 768px) {
+  .qs-policy-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+@media (max-width: 768px) {
+  .connector-premium-flow {
+    display: none !important;
+  }
+
+@media (max-width: 760px) {
+  .hero-gradient-overlay {
+    background: linear-gradient(180deg,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(255, 255, 255, 0.85) 50%,
+        rgba(255, 255, 255, 0.40) 100%);
+  }
+
+@media (max-width: 760px) {
+  .qs-reference-hero__badge {
+    height: auto;
+    min-height: 54px;
+    margin-bottom: 28px;
+    padding: 14px 16px;
+  }

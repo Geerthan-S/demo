@@ -1,0 +1,75 @@
+﻿diff --git a/src/components/sections/Hero.tsx b/src/components/sections/Hero.tsx
+index a91a4dc..01dd1eb 100644
+--- a/src/components/sections/Hero.tsx
++++ b/src/components/sections/Hero.tsx
+@@ -94,18 +94,19 @@ export function Hero({
+           content: "";
+           position: absolute;
+           inset: 0;
+-          z-index: 1;
++          z-index: 15;
+           pointer-events: none;
+           background:
+             linear-gradient(
+               90deg,
+               rgba(255, 255, 255, 0.98) 0%,
+-              rgba(255, 255, 255, 0.96) 22%,
+-              rgba(255, 255, 255, 0.82) 38%,
+-              rgba(255, 255, 255, 0.45) 50%,
+-              rgba(255, 255, 255, 0.12) 60%,
+-              transparent 70%
++              rgba(255, 255, 255, 0.96) 15%,
++              rgba(255, 255, 255, 0.8) 25%,
++              rgba(255, 255, 255, 0.3) 28%,
++              transparent 45%
+             );
++          mask-image: linear-gradient(to bottom, black 60%, transparent 92%);
++          -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 92%);
+         }
+ 
+         .home-hero-reference .home-hero-bg {
+@@ -135,25 +136,7 @@ export function Hero({
+         }
+ 
+         .home-hero-reference .home-hero-white-wash {
+-          position: absolute !important;
+-          inset: 0 !important;
+-          z-index: 3 !important;
+-          pointer-events: none !important;
+-          background:
+-            linear-gradient(
+-                90deg,
+-                rgba(255,255,255,.98) 0%,
+-                rgba(255,255,255,.96) 22%,
+-                rgba(255,255,255,.82) 38%,
+-                rgba(255,255,255,.45) 50%,
+-                rgba(255,255,255,.12) 60%,
+-                transparent 70%
+-            ),
+-            radial-gradient(
+-                ellipse at 20% 45%,
+-                rgba(255,255,255,.42),
+-                transparent 70%
+-            ) !important;
++          display: none !important;
+         }
+ 
+         .home-hero-reference .qs-reference-hero__glass-wrapper {
+@@ -322,16 +305,7 @@ export function Hero({
+           object-fit: cover !important;
+         }
+         .qs-reference-hero__glass-fade {
+-          position: absolute;
+-          top: 0;
+-          bottom: 0;
+-          left: 0;
+-          right: 0;
+-          background:
+-            linear-gradient(90deg, #ffffff 0%, #ffffff 32%, rgba(255, 255, 255, 0.96) 43%, rgba(255, 255, 255, 0.74) 54%, rgba(255, 255, 255, 0.24) 66%, transparent 78%),
+-            radial-gradient(circle at 25% 54%, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.76) 31%, transparent 62%);
+-          z-index: 1;
+-          pointer-events: none;
++          display: none !important;
+         }
+         
+         .qs-reference-hero__glass-wrapper {

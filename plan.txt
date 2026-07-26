@@ -1,0 +1,393 @@
+You are a senior Next.js + TypeScript + Tailwind CSS architect working on the Dockside Constructions website. Your task is to completely refactor the existing Projects module from a dedicated case-study page architecture to a modal/popup architecture.
+
+# OBJECTIVE
+
+The current implementation opens a dedicated page when a user clicks "View Project". The client has decided that project details should no longer exist as separate pages. Instead, all project details must open inside a professional full-screen popup/modal.
+
+Your task is to perform a complete architectural migration.
+
+---
+
+# PART 1 — REMOVE THE EXISTING CASE STUDY PAGE SYSTEM
+
+Delete every component, route, style, helper, and API implementation that exists only for project case-study pages.
+
+Remove:
+
+* All dynamic project routes such as:
+
+  * `/projects/[slug]`
+  * `/case-study/[slug]`
+  * any equivalent project detail routes
+
+* Delete:
+
+  * page.tsx files
+  * layout.tsx files
+  * loading.tsx files
+  * metadata generators
+  * project detail components
+  * project detail CSS
+  * project detail SCSS
+  * project detail hooks
+  * project detail utilities
+  * project detail API handlers
+  * project detail schemas
+  * project detail types that are no longer needed
+
+* Remove all imports and references to:
+
+  * challenge sections
+  * solution sections
+  * execution flow sections
+  * related services sections
+  * proof points sections
+  * project dossier sections
+  * CTA sections
+  * timeline case-study components
+  * case-study SEO generators
+
+* Remove all unused assets related only to project detail pages.
+
+After deletion, ensure:
+
+* no dead code exists
+* no unused imports remain
+* no broken routes remain
+* the application builds successfully
+
+---
+
+# PART 2 — CONVERT "VIEW PROJECT" TO OPEN A MODAL
+
+Currently:
+
+```tsx
+<Link href={`/projects/${project.slug}`}>
+    View Project
+</Link>
+```
+
+Replace this behavior with:
+
+```tsx
+<Button onClick={() => openProject(project)}>
+    View Project
+</Button>
+```
+
+Requirements:
+
+* Clicking any project card opens a full-screen modal.
+* No page navigation should occur.
+* URL should remain unchanged.
+* Modal should support ESC close.
+* Modal should support backdrop click close.
+* Modal should support mobile swipe scrolling.
+* Body scroll should lock while modal is open.
+
+---
+
+# PART 3 — CREATE A PREMIUM PROJECT MODAL
+
+Create a reusable component:
+
+```bash
+components/projects/project-modal.tsx
+```
+
+The modal should have:
+
+### HEADER
+
+* Project title
+* Client name
+* Status badge
+* Close button
+
+Example:
+
+```
+Adani Logistics Civil & Structural Works
+Adani Logistics Limited
+[ONGOING]
+                          X
+```
+
+---
+
+### HERO IMAGE
+
+Display:
+
+* large cover image
+* aspect ratio maintained
+* rounded corners
+* object-cover
+
+---
+
+### PROJECT INFORMATION GRID
+
+Display only:
+
+| Field         | Value                     |
+| ------------- | ------------------------- |
+| Client        | Adani Logistics Limited   |
+| Sector        | Logistics                 |
+| Location      | Malur, Karnataka          |
+| Project Value | INR 10 Crores             |
+| Status        | Ongoing                   |
+| Timeline      | Ongoing                   |
+| Area/Coverage | Miscellaneous civil works |
+| Manpower      | if available              |
+| Equipment     | if available              |
+
+Use responsive cards.
+
+---
+
+### SCOPE OF WORK
+
+Display as bullet points:
+
+* Civil works
+* RCC works
+* Drainage works
+* Structural works
+
+---
+
+### PROJECT HIGHLIGHTS
+
+Display as highlight cards:
+
+✓ Logistics Infrastructure
+
+✓ RCC Construction
+
+✓ Structural Execution
+
+✓ Safety Compliance
+
+---
+
+### PROJECT GALLERY
+
+Display:
+
+* responsive grid
+* minimum 4 images
+* maximum unlimited images
+* clicking image opens lightbox
+* support next/previous navigation
+
+Example:
+
+```
+[img] [img]
+[img] [img]
+```
+
+---
+
+### FOOTER
+
+Display:
+
+```
+Client:
+Location:
+Project Value:
+Status:
+```
+
+plus a close button.
+
+---
+
+# PART 4 — SIMPLIFY THE ADMIN CMS
+
+The current project CMS contains too many fields.
+
+Remove these fields entirely:
+
+* project count
+* challenge
+* solution
+* delivered works
+* execution flow
+* proof points
+* project dossier
+* related services
+* case study description
+* long description
+* CTA sections
+* execution timeline section
+* start similar project section
+
+---
+
+# PART 5 — CREATE THE NEW PROJECT CMS STRUCTURE
+
+The admin panel should contain only:
+
+## BASIC INFORMATION
+
+* Project Title
+* Slug
+* Client Name
+* Client Logo
+* Sector
+* Location
+* Project Status
+* Project Value
+* Timeline
+* Area/Coverage
+* Manpower Deployed
+* Equipment Used
+
+---
+
+## MEDIA
+
+* Cover Image
+* Gallery Images (multiple upload)
+
+Gallery should store:
+
+```ts
+galleryImages: string[]
+```
+
+---
+
+## PROJECT DETAILS
+
+* Short Description
+* Scope Of Work (string[])
+* Project Highlights (string[])
+
+Example:
+
+```json
+[
+  "Logistics Infrastructure",
+  "RCC Works",
+  "Drainage Systems",
+  "Structural Works",
+  "Safety Compliance"
+]
+```
+
+---
+
+## SEO
+
+Keep only:
+
+* SEO Title
+* SEO Description
+
+---
+
+## PUBLISHING
+
+Keep:
+
+* Published
+* Featured
+
+---
+
+# PART 6 — UPDATE DATABASE TYPES
+
+Refactor all interfaces, schemas, Prisma models, Supabase types, and validation schemas.
+
+Remove fields related to:
+
+* challenge
+* solution
+* proofPoints
+* relatedServices
+* executionFlow
+* dossier
+* deliveredWorks
+* caseStudyContent
+
+Create a clean project model similar to:
+
+```ts
+interface Project {
+    id: string;
+    title: string;
+    slug: string;
+    clientName: string;
+    clientLogo?: string;
+    sector: string;
+    location: string;
+    status: string;
+    projectValue: string;
+    timeline?: string;
+    areaCoverage?: string;
+    manpower?: string;
+    equipment?: string;
+    shortDescription: string;
+    scopeOfWork: string[];
+    highlights: string[];
+    coverImage: string;
+    galleryImages: string[];
+    seoTitle?: string;
+    seoDescription?: string;
+    featured: boolean;
+    published: boolean;
+}
+```
+
+---
+
+# PART 7 — CLEANUP
+
+After migration:
+
+* remove unused imports
+* remove unused CSS
+* remove unused components
+* remove unused API routes
+* remove unused hooks
+* remove unused utility functions
+* remove unused types
+* remove unused assets
+* ensure TypeScript has zero errors
+* ensure ESLint has zero warnings
+* ensure the application builds successfully
+
+---
+
+# DESIGN REQUIREMENTS
+
+Maintain the existing Dockside design language:
+
+* premium industrial aesthetic
+* dark theme
+* red accent color
+* smooth animations
+* professional corporate appearance
+* responsive on mobile, tablet, and desktop
+* modern construction company UI
+
+---
+
+# FINAL OUTPUT
+
+Provide:
+
+1. Files deleted
+2. Files created
+3. Files modified
+4. Database/schema changes
+5. Component architecture
+6. Admin CMS changes
+7. Migration summary
+8. Any breaking changes found
+9. Final project structure tree

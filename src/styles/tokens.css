@@ -1,0 +1,76 @@
+/**
+ * tokens.css — LEGACY BRIDGE FILE
+ * Dockside Constructions
+ *
+ * This file is RETAINED for backward compatibility with any component
+ * that imports or references legacy token names (--accent-brass, --bg-base, etc.)
+ *
+ * STATUS: All tokens below now correctly map to the new token system
+ *         defined in src/styles/tokens/*.css
+ *
+ * NOTE: The full authoritative token system lives in:
+ *   src/styles/tokens/colors.css
+ *   src/styles/tokens/typography.css
+ *   src/styles/tokens/spacing.css
+ *   src/styles/tokens/radius.css
+ *   src/styles/tokens/shadows.css
+ *   src/styles/tokens/z-index.css
+ *   src/styles/tokens/containers.css
+ *   src/styles/tokens/animation.css
+ *
+ * DO NOT add new tokens here. Add to the appropriate tokens/*.css file.
+ */
+
+:root {
+  /* ── BACKGROUNDS ─────────────────────────────────── */
+  --bg-base:      #fdfaf7;                        /* Warm paper white */
+  --bg-surface:   #ffffff;                        /* Pure white surface */
+  --bg-card:      #ffffff;                        /* Card background */
+  --bg-charcoal:  #171a18;                        /* Dark charcoal (FIXED: was cream) */
+  --bg-elevated:  rgba(255, 255, 255, 0.95);      /* Elevated surface */
+  --bg-glass:     rgba(253, 251, 247, 0.85);      /* Glass overlay */
+
+  /* ── ACCENTS ─────────────────────────────────────── */
+  /* FIXED: Previously all resolved to #7b2a3a (maroon).
+     Now each token has its correct semantic value. */
+  --accent-brass:        #c8924a;                 /* FIXED: was #7b2a3a. Brass/gold accent */
+  --accent-brass-faint:  rgba(200, 146, 74, 0.08);
+  --accent-brass-mid:    rgba(200, 146, 74, 0.25);
+
+  /* Legacy aliases — these were semantically wrong before */
+  --safety-orange: #e85d26;                       /* FIXED: was #7b2a3a. Actual orange */
+  --safety-blue:   #2563eb;                       /* FIXED: was #666666. Actual blue */
+  --copper:        #c8924a;                       /* FIXED: was #7b2a3a. Copper/brass */
+  --amber:         #d97706;                       /* FIXED: was #7b2a3a. Actual amber */
+  --steel:         #64748b;                       /* FIXED: was #8a8a8a. Steel blue-grey */
+  --graphite:      #374151;                       /* FIXED: was cream #f4f0e6. Actual graphite */
+
+  /* ── PRIMARY BRAND COLOR ─────────────────────────── */
+  --rust:          #6b1f2e;                       /* Brand maroon — correct */
+
+  /* ── TEXT ────────────────────────────────────────── */
+  --text-primary:  #101211;
+  --text-muted:    #5e645f;
+  --text-soft:     #8a9299;
+  --text-accent:   #6b1f2e;                       /* Maroon — unchanged */
+
+  /* ── BORDERS ──────────────────────────────────────── */
+  --border-faint:  rgba(0, 0, 0, 0.06);
+  --border-mid:    rgba(107, 31, 46, 0.15);
+  --border-blue:   rgba(107, 31, 46, 0.10);       /* Kept alias, now maroon-based */
+
+  /* ── FONT FAMILIES ───────────────────────────────── */
+  /* Premium typography: Inter for display, body, and UI */
+  --font-display: var(--font-inter);
+  --font-body:    var(--font-inter);
+  --font-ui:      var(--font-body);
+  --font-mono:    var(--font-body);
+
+  /* ── SHADOWS ──────────────────────────────────────── */
+  --shadow-glass:  0 12px 40px rgba(0, 0, 0, 0.08);
+  --shadow-glow:   0 0 30px rgba(107, 31, 46, 0.10);
+
+  /* ── TRANSITIONS ──────────────────────────────────── */
+  --transition-default: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-slow:    720ms cubic-bezier(0.22, 1, 0.36, 1);
+}

@@ -1,0 +1,27 @@
+{
+  "parentBox": {
+    "x": 0,
+    "y": 540.84375,
+    "width": 1265,
+    "height": 80.15625,
+    "top": 540.84375,
+    "right": 1265,
+    "bottom": 621,
+    "left": 0
+  },
+  "parentCSS": {
+    "position": "absolute",
+    "inset": "636.287px 0px 90px",
+    "height": "94.3015px"
+  },
+  "childBox": {
+    "x": 0,
+    "y": 540.84375,
+    "width": 1265,
+    "height": 80.15625,
+    "top": 540.84375,
+    "right": 1265,
+    "bottom": 621,
+    "left": 0
+  }
+}
