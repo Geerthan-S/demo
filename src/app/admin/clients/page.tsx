@@ -17,7 +17,7 @@ export default async function AdminClientsPage({
   await requireAdmin();
   const params = await searchParams;
   const clients = await runSafeQuery<ClientView[]>(
-    () => getPrisma().client.findMany({ orderBy: { updatedAt: "desc" } }) as any,
+    () => getPrisma().client.findMany({ orderBy: { updatedAt: "desc" } }),
     seedClients,
   );
 

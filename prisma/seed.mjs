@@ -220,19 +220,13 @@ function splitId(record) {
 
 async function seedAdmin() {
   const email = (process.env.SEED_ADMIN_EMAIL ?? "admin@docksideconstructions.com").toLowerCase();
-  const password =
-    process.env.SEED_ADMIN_PASSWORD ??
-    process.env.FALLBACK_ADMIN_PASSWORD ??
-    "DocksideAdmin#2026";
+  const password = process.env.SEED_ADMIN_PASSWORD;
 
-  const isDefaultPassword =
-    !process.env.SEED_ADMIN_EMAIL &&
-    !process.env.SEED_ADMIN_PASSWORD &&
-    !process.env.FALLBACK_ADMIN_PASSWORD;
+  if (!password || password.length < 12) {
+    throw new Error("Set SEED_ADMIN_PASSWORD to a unique password with at least 12 characters before seeding.");
+  }
 
-  const passwordHash = isDefaultPassword
-    ? "$2b$10$107sr.Ad7tQpAwz1egVvRuyKDvs8xzEMcN0VlzQkT5UV4qFv75IFG"
-    : await bcrypt.hash(password, 4);
+  const passwordHash = await bcrypt.hash(password, 12);
 
   return prisma.user.upsert({
     where: { email },

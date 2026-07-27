@@ -114,7 +114,7 @@ export function InternshipButton({ settings, jobOpenings }: InternshipButtonProp
               ) : (
                 <div className="cv2-modal-empty">
                   <p>
-                    No internship positions are currently available, but we're
+                    No internship positions are currently available, but we&apos;re
                     always looking for talented individuals to join our team.
                   </p>
                   <p>
@@ -122,7 +122,7 @@ export function InternshipButton({ settings, jobOpenings }: InternshipButtonProp
                     <a href="mailto:admin@docksideconstructions.com">
                       admin@docksideconstructions.com
                     </a>{" "}
-                    and we'll keep it on file for future opportunities.
+                    and we&apos;ll keep it on file for future opportunities.
                   </p>
                   <div className="cv2-modal-footer">
                     <Link href="/contact" className="cv2-btn cv2-btn--outline">

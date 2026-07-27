@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CheckCircle2, X } from "lucide-react";
 
 interface ApplicationSuccessNotificationProps {
@@ -12,28 +12,21 @@ export function ApplicationSuccessNotification({
   isVisible,
   onDismiss,
 }: ApplicationSuccessNotificationProps) {
-  const [isShowing, setIsShowing] = useState(false);
-
   useEffect(() => {
     if (isVisible) {
-      setIsShowing(true);
-      // Auto-dismiss after 5 seconds
       const timer = setTimeout(() => {
-        setIsShowing(false);
-        setTimeout(onDismiss, 300); // Wait for animation to complete
+        onDismiss();
       }, 5000);
 
       return () => clearTimeout(timer);
     }
   }, [isVisible, onDismiss]);
 
-  if (!isVisible && !isShowing) return null;
+  if (!isVisible) return null;
 
   return (
     <div
-      className={`fixed bottom-6 right-6 z-[100] transition-all duration-300 ${
-        isShowing ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-      }`}
+      className="fixed bottom-6 right-6 z-[100] transition-all duration-300 opacity-100 translate-y-0"
     >
       <div className="bg-white rounded-lg shadow-2xl border border-green-200 overflow-hidden min-w-[320px]">
         <div className="flex items-center gap-3 p-4">
@@ -43,13 +36,12 @@ export function ApplicationSuccessNotification({
           <div className="flex-1">
             <h3 className="text-sm font-semibold text-gray-900">Application Submitted!</h3>
             <p className="text-xs text-gray-600 mt-0.5">
-              We'll review your application and get back to you soon.
+              We&apos;ll review your application and get back to you soon.
             </p>
           </div>
           <button
             onClick={() => {
-              setIsShowing(false);
-              setTimeout(onDismiss, 300);
+              onDismiss();
             }}
             className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
           >

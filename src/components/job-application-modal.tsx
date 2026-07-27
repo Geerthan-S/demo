@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { X, UploadCloud, CheckCircle2, Loader2, Send } from "lucide-react";
 import type { JobOpening } from "@/lib/repositories";
 
@@ -126,8 +126,8 @@ export function JobApplicationModal({ isOpen, onClose, jobOpening, onSuccess }: 
 
       onSuccess();
       onClose();
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     } finally {
       setIsSubmitting(false);
     }
@@ -326,7 +326,16 @@ export function JobApplicationModal({ isOpen, onClose, jobOpening, onSuccess }: 
    Helper Components 
    ────────────────────────────────────────────────────────────────────────────── */
 
-function FloatingInput({ id, label, type, value, onChange, required }: any) {
+type FloatingInputProps = {
+  id: string;
+  label: string;
+  type: string;
+  value: string;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  required?: boolean;
+};
+
+function FloatingInput({ id, label, type, value, onChange, required }: FloatingInputProps) {
   return (
     <div className="relative group">
       <input
@@ -348,7 +357,16 @@ function FloatingInput({ id, label, type, value, onChange, required }: any) {
   );
 }
 
-function FloatingSelect({ id, label, children, value, onChange, required }: any) {
+type FloatingSelectProps = {
+  id: string;
+  label: string;
+  children: React.ReactNode;
+  value: string;
+  onChange: React.ChangeEventHandler<HTMLSelectElement>;
+  required?: boolean;
+};
+
+function FloatingSelect({ id, label, children, value, onChange, required }: FloatingSelectProps) {
   return (
     <div className="relative group">
       <select

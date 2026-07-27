@@ -19,6 +19,14 @@ const STATUS_OPTIONS = [
   { value: "Hired", label: "Hired", color: "bg-[#8B3A4A]/20 text-[#8B3A4A]" },
 ];
 
+function resumeHref(resumeUrl: string) {
+  const privatePrefix = "private://resumes/";
+  if (resumeUrl.startsWith(privatePrefix)) {
+    return `/api/job-applications/resumes/${encodeURIComponent(resumeUrl.slice(privatePrefix.length))}`;
+  }
+  return resumeUrl;
+}
+
 type JobApplicationWithOpening = Prisma.JobApplicationGetPayload<{
   include: {
     jobOpening: {
@@ -156,7 +164,7 @@ export default async function AdminJobApplicationsPage() {
                   </TableCell>
                   <TableCell className="flex justify-end gap-2 items-center">
                     <Button asChild variant="outline" size="sm" className="h-8 shadow-sm">
-                      <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer">
+                      <a href={resumeHref(app.resumeUrl)} target="_blank" rel="noopener noreferrer">
                         <FileText className="size-3 mr-1.5 text-[#8B3A4A]" />
                         Resume
                       </a>

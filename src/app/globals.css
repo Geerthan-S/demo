@@ -8653,59 +8653,97 @@ body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .indu
   background-color: #a94452 !important;
 }
 
-/* 2. Typographic Full-Screen Overlay Overrides */
+/* 2. Mobile full-screen navigation overlay */
 html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav .industrial-overlay {
   position: fixed !important;
   inset: 0 !important;
-  z-index: 140 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
-  padding: 112px 24px 48px !important;
-  background: radial-gradient(circle at 72% 8%, rgba(124, 45, 56, 0.08), transparent 32rem), rgba(253, 250, 247, 0.97) !important;
-  backdrop-filter: blur(28px) !important;
-  -webkit-backdrop-filter: blur(28px) !important;
+  height: 100dvh !important;
+  z-index: 900 !important;
+  display: block !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: clamp(90px, 18dvh, 116px) max(20px, env(safe-area-inset-left)) calc(22px + env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-right)) !important;
+  background: #fdfaf4 !important;
+  backdrop-filter: blur(2px) !important;
+  -webkit-backdrop-filter: blur(2px) !important;
   border-left: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  transform: scale(1.05) !important;
-  transition: opacity 350ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
-    visibility 350ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  transform: translateY(8px) !important;
+  transition: opacity 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 260ms cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
 html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav .industrial-overlay.is-open {
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
-  transform: scale(1) !important;
+  transform: translateY(0) !important;
+}
+
+@media (max-width: 1440px) {
+  html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav.is-menu-open {
+    z-index: 1000 !important;
+    background: #fdfaf4 !important;
+    box-shadow: 0 8px 28px rgba(87, 35, 43, 0.10) !important;
+  }
+
+  html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav.is-menu-open .industrial-nav__utility {
+    display: none !important;
+  }
+
+  html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav.is-menu-open .industrial-nav__call {
+    display: none !important;
+  }
+
+  html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav.is-menu-open .industrial-nav__bar {
+    position: relative !important;
+    z-index: 950 !important;
+    background: #fdfaf4 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom: 1px solid rgba(139, 63, 74, 0.14) !important;
+  }
+}
+
+.industrial-menu.is-open {
+  z-index: 960 !important;
+  background: #8b2332 !important;
+  border-color: #7c1d2b !important;
+  box-shadow: 0 4px 16px rgba(139, 35, 50, 0.22) !important;
+}
+
+.industrial-menu.is-open .line-1,
+.industrial-menu.is-open .line-3 {
+  background-color: #ffffff !important;
 }
 
 .industrial-overlay__content {
-  width: 100%;
-  max-width: 680px;
-  margin: auto;
+  width: min(100%, 680px);
+  margin: 0 auto;
   display: flex;
+  min-height: calc(100dvh - clamp(112px, 21dvh, 140px));
   flex-direction: column;
-  gap: 36px;
+  gap: clamp(18px, 4.8dvh, 30px);
 }
 
 .industrial-overlay__meta {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   opacity: 0;
-  transform: translateY(15px);
-  transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateY(10px);
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .industrial-overlay.is-open .industrial-overlay__meta {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 50ms;
+  transition-delay: 40ms;
 }
 
 .industrial-overlay__subtitle {
@@ -8713,43 +8751,49 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  color: #a94452;
-  font-weight: 500;
+  color: #8b2332;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .industrial-overlay__line {
   flex-grow: 1;
   height: 1px;
-  background: linear-gradient(90deg, rgba(124, 45, 56, 0.18), transparent);
+  background: linear-gradient(90deg, rgba(139, 35, 50, 0.28), transparent);
 }
 
 .industrial-overlay__links {
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important;
-  align-items: flex-start !important;
+  gap: clamp(8px, 1.8dvh, 12px) !important;
+  align-items: stretch !important;
   border-bottom: none !important;
 }
 
 .industrial-overlay__links a {
-  display: flex !important;
+  display: grid !important;
+  grid-template-columns: clamp(30px, 10vw, 42px) minmax(0, 1fr) !important;
   align-items: baseline !important;
-  gap: 16px !important;
+  gap: clamp(10px, 3.5vw, 16px) !important;
+  width: 100% !important;
+  min-width: 0 !important;
   font-family: var(--font-nav, var(--font-display)) !important;
-  font-size: clamp(32px, 5.2vw, 52px) !important;
+  font-size: clamp(28px, 8vw, 38px) !important;
   font-weight: 700 !important;
-  letter-spacing: 0.04em !important;
-  line-height: 1.05 !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1.02 !important;
   text-transform: uppercase !important;
-  color: #101211 !important;
-  border-bottom: none !important;
-  padding: 4px 0 !important;
+  color: #151110 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 2px 0 !important;
   text-decoration: none !important;
   opacity: 0 !important;
-  transform: translateY(20px) !important;
-  transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 450ms cubic-bezier(0.22, 1, 0.36, 1),
-    color 220ms ease !important;
+  transform: translateY(16px) !important;
+  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 180ms ease !important;
 }
 
 .industrial-overlay.is-open .industrial-overlay__links a {
@@ -8759,101 +8803,103 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
 
 .industrial-overlay__links a .link-number {
   font-family: var(--font-mono);
-  font-size: 12px;
-  color: rgba(16, 18, 17, 0.35);
-  transition: color 220ms ease;
-  font-weight: 500;
+  font-size: clamp(10px, 3vw, 12px);
+  color: rgba(21, 17, 16, 0.38);
+  font-weight: 600;
+  letter-spacing: 0.08em;
 }
 
 .industrial-overlay__links a .link-text {
   position: relative;
   display: inline-block;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .industrial-overlay__links a .link-text::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
-  bottom: -2px;
+  bottom: -5px;
   width: 0;
-  height: 1px;
-  background-color: #a94452;
-  transition: width 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  height: 2px;
+  background-color: #8b2332;
+  transition: width 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Hover effects */
-.industrial-overlay__links a:hover {
-  color: #a94452 !important;
-}
-
-.industrial-overlay__links a:hover .link-number {
-  color: #a94452 !important;
-}
-
-.industrial-overlay__links a:hover .link-text::after {
-  width: 100%;
-}
-
-/* Active links */
+.industrial-overlay__links a:hover,
+.industrial-overlay__links a:focus-visible,
 .industrial-overlay__links a.is-active {
-  color: #a94452 !important;
+  color: #8b2332 !important;
+  outline: none !important;
 }
 
-.industrial-overlay__links a.is-active .link-number {
-  color: #a94452 !important;
-}
-
+.industrial-overlay__links a:focus-visible .link-text::after,
 .industrial-overlay__links a.is-active .link-text::after {
-  width: 100%;
+  width: clamp(34px, 14vw, 56px);
 }
 
-/* 3. Overlay Footer Contacts */
+/* 3. Compact overlay footer contacts */
 .industrial-overlay__footer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
-  border-top: 1px solid rgba(16, 18, 17, 0.08);
-  padding-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: auto;
+  border-top: 1px solid rgba(139, 35, 50, 0.14);
+  padding-top: clamp(14px, 3dvh, 20px);
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 3.1vw, 12px);
+  line-height: 1.5;
+  color: rgba(21, 17, 16, 0.64);
   opacity: 0;
-  transform: translateY(15px);
-  transition: transform 550ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 550ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateY(10px);
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .industrial-overlay.is-open .industrial-overlay__footer {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 400ms;
+  transition-delay: 360ms;
 }
 
-.overlay-footer-col h4 {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: rgba(16, 18, 17, 0.45);
-  margin: 0 0 10px;
-  font-weight: 500;
-}
-
-.overlay-footer-col a,
-.overlay-footer-col address {
-  display: block;
-  font-size: 13px;
-  line-height: 1.55;
-  color: rgba(16, 18, 17, 0.75);
+.industrial-overlay__footer a,
+.industrial-overlay__footer span {
+  color: inherit;
   text-decoration: none;
-  font-style: normal;
+  white-space: nowrap;
 }
 
-.overlay-footer-col a:hover {
-  color: #a94452 !important;
+.industrial-overlay__footer a:hover,
+.industrial-overlay__footer a:focus-visible {
+  color: #8b2332 !important;
+  outline: none;
 }
 
 @media (max-width: 480px) {
+  html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav .industrial-overlay {
+    padding-top: 86px !important;
+  }
+
+  .industrial-overlay__content {
+    min-height: calc(100dvh - 108px);
+  }
+
   .industrial-overlay__footer {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav .industrial-overlay,
+  .industrial-overlay__meta,
+  .industrial-overlay__links a,
+  .industrial-overlay__links a .link-text::after,
+  .industrial-overlay__footer {
+    transition: none !important;
+    transform: none !important;
   }
 }
 

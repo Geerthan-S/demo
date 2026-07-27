@@ -1,10 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
+  BadgeCheck,
+  ChevronDown,
+  Clock3,
   Download,
   Instagram,
   Linkedin,
   Mail,
+  MapPin,
+  Phone,
 } from "lucide-react";
 import { DOCKSIDE_LOGO_SRC, Logo } from "@/components/ui/logo";
 
@@ -89,7 +94,7 @@ export function SiteFooter() {
           <FooterColumn title="RESOURCES" links={resourceLinks} downloadPdfs />
 
           {/* Legal Column */}
-          <div className="industrial-footer__column col-span-1 text-left items-start w-full justify-self-start">
+          <div className="industrial-footer__column industrial-footer__column--desktop col-span-1 text-left items-start w-full justify-self-start">
             <h3 className="text-[12px] font-mono font-bold tracking-[0.2em] text-[#d4707c] uppercase mb-3 text-left">LEGAL</h3>
             <nav aria-label="Legal information" className="flex flex-col gap-2 text-left items-start">
               <div className="footer-info-row flex flex-row items-baseline justify-start gap-2 text-[12px] text-white/70 text-left">
@@ -107,27 +112,53 @@ export function SiteFooter() {
             </nav>
           </div>
 
+          <details className="industrial-footer__accordion industrial-footer__accordion--legal col-span-1 text-left w-full justify-self-start">
+            <summary>
+              <BadgeCheck className="industrial-footer__accordion-badge" aria-hidden="true" />
+              <span>LEGAL</span>
+              <ChevronDown aria-hidden="true" />
+            </summary>
+            <nav aria-label="Legal information mobile" className="industrial-footer__accordion-links industrial-footer__accordion-links--legal">
+              <div className="footer-info-row flex flex-row items-baseline justify-start gap-2 text-[12px] text-white/70 text-left">
+                <span className="text-[#d4707c] font-bold shrink-0">CIN:</span>
+                <span className="font-mono text-[11px] text-white/90 tracking-tight">U45309TN2022PTC153673</span>
+              </div>
+              <div className="footer-info-row flex flex-row items-baseline justify-start gap-2 text-[12px] text-white/70 text-left">
+                <span className="text-[#d4707c] font-bold shrink-0">Registered Office:</span>
+                <span className="text-white/80">No 58, V.G.P Nagar, Salamedu, Villupuram - 605401</span>
+              </div>
+              <div className="footer-info-row flex flex-row items-baseline justify-start gap-2 text-[12px] text-white/70 text-left">
+                <span className="text-[#d4707c] font-bold shrink-0">Incorporated:</span>
+                <span className="text-white/80">2022 - Private Limited</span>
+              </div>
+            </nav>
+          </details>
+
           {/* Contact Column */}
-          <div className="industrial-footer__column col-span-1 text-left items-start w-full justify-self-start">
+          <div className="industrial-footer__column industrial-footer__contact-col col-span-1 text-left items-start w-full justify-self-start">
             <h3 className="text-[12px] font-mono font-bold tracking-[0.2em] text-[#d4707c] uppercase mb-3 text-left">CONTACT</h3>
             <nav aria-label="Contact information" className="flex flex-col gap-2 text-left items-start">
               <div className="footer-info-row flex flex-row items-baseline justify-start gap-2 text-[12px] text-white/70 text-left">
+                <span className="footer-info-icon hidden" aria-hidden="true"><Phone /></span>
                 <span className="text-[#d4707c] font-bold shrink-0">Phone:</span>
                 <a href="tel:+918825922737" className="text-white/90 hover:text-white transition-colors">
                   +91 88259 22737
                 </a>
               </div>
               <div className="footer-info-row flex flex-row items-baseline justify-start gap-2 text-[12px] text-white/70 text-left">
+                <span className="footer-info-icon hidden" aria-hidden="true"><Mail /></span>
                 <span className="text-[#d4707c] font-bold shrink-0">Email:</span>
                 <a href="mailto:admin@docksideconstructions.com" className="text-white/90 hover:text-white transition-colors break-all">
                   admin@docksideconstructions.com
                 </a>
               </div>
               <div className="footer-info-row flex flex-row items-baseline justify-start gap-2 text-[12px] text-white/70 text-left">
+                <span className="footer-info-icon hidden" aria-hidden="true"><Clock3 /></span>
                 <span className="text-[#d4707c] font-bold shrink-0">Hours:</span>
                 <span className="text-white/80">Mon – Sat, 9:00 AM – 6:00 PM</span>
               </div>
               <div className="footer-info-row flex flex-row items-baseline justify-start gap-2 text-[12px] text-white/70 text-left">
+                <span className="footer-info-icon hidden" aria-hidden="true"><MapPin /></span>
                 <span className="text-[#d4707c] font-bold shrink-0">Address:</span>
                 <span className="text-white/80">No 58, V.G.P Nagar, Salamedu, Villupuram – 605401</span>
               </div>
@@ -157,36 +188,52 @@ function FooterColumn({
   links: readonly (readonly [string, string])[];
   downloadPdfs?: boolean;
 }) {
-  return (
-    <div className="industrial-footer__column col-span-1 text-left items-start w-full justify-self-start">
-      <h3 className="text-[12px] font-mono font-bold tracking-[0.2em] text-[#d4707c] uppercase mb-3 text-left">{title}</h3>
-      <nav aria-label={title} className="flex flex-col gap-2 text-left items-start w-full">
-        {links.map(([label, href]) => {
-          const isDownload = downloadPdfs && href.includes(".pdf");
+  const renderLinks = () =>
+    links.map(([label, href]) => {
+        const isDownload = downloadPdfs && href.includes(".pdf");
 
-          if (href.startsWith("mailto:")) {
-            return (
-              <a href={href} key={label} style={{ textAlign: "left" }} className="text-[12px] text-white/70 hover:text-white transition-colors !text-left w-full block">
-                {label}
-              </a>
-            );
-          }
-
-          if (isDownload) {
-            return (
-              <a href={href} download key={label} style={{ textAlign: "left" }} className="text-[12px] text-white/70 hover:text-white transition-colors !text-left w-full block">
-                {label}
-              </a>
-            );
-          }
-
+        if (href.startsWith("mailto:")) {
           return (
-            <Link href={href} key={label} style={{ textAlign: "left" }} className="text-[12px] text-white/70 hover:text-white transition-colors !text-left w-full block">
+            <a href={href} key={label} style={{ textAlign: "left" }} className="text-[12px] text-white/70 hover:text-white transition-colors !text-left w-full block">
               {label}
-            </Link>
+            </a>
           );
-        })}
-      </nav>
-    </div>
+        }
+
+        if (isDownload) {
+          return (
+            <a href={href} download key={label} style={{ textAlign: "left" }} className="text-[12px] text-white/70 hover:text-white transition-colors !text-left w-full block">
+              {label}
+            </a>
+          );
+        }
+
+        return (
+          <Link href={href} key={label} style={{ textAlign: "left" }} className="text-[12px] text-white/70 hover:text-white transition-colors !text-left w-full block">
+            {label}
+          </Link>
+        );
+      });
+
+  return (
+    <>
+      <div className="industrial-footer__column industrial-footer__column--desktop col-span-1 text-left items-start w-full justify-self-start">
+        <h3 className="text-[12px] font-mono font-bold tracking-[0.2em] text-[#d4707c] uppercase mb-3 text-left">{title}</h3>
+        <nav aria-label={title} className="flex flex-col gap-2 text-left items-start w-full">
+          {renderLinks()}
+        </nav>
+      </div>
+
+      <details className="industrial-footer__accordion col-span-1 text-left w-full justify-self-start">
+        <summary>
+          <BadgeCheck className="industrial-footer__accordion-badge" aria-hidden="true" />
+          <span>{title}</span>
+          <ChevronDown aria-hidden="true" />
+        </summary>
+        <nav aria-label={`${title} mobile`} className="industrial-footer__accordion-links">
+          {renderLinks()}
+        </nav>
+      </details>
+    </>
   );
 }

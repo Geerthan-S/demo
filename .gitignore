@@ -26,8 +26,20 @@ server.log
 output/
 tmp/
 /hero/
+.data/
+.agent/
+.codex/
 WORK_REPORT_*.md
 work-report-*.md
+foo*.txt
+*result*.json
+css-results*.txt
+tsc*.txt
+build*.txt
+*.out
+git_diff.txt
+curl_out.txt
+search-css.js
 
 # TypeScript cache
 *.tsbuildinfo

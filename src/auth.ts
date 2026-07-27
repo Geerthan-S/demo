@@ -10,7 +10,7 @@ const credentialsSchema = z.object({
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  trustHost: true,
+  trustHost: process.env.AUTH_TRUST_HOST === "true",
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
   providers: [
@@ -20,25 +20,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(rawCredentials) {
-        if (rawCredentials?.password === "Geerthan@2706" || rawCredentials?.password === "DocksideAdmin#2026") {
-          return {
-            id: "fallback-super-admin",
-            name: "Dockside Super Admin",
-            email: "admin@docksideconstructions.com",
-            role: "SUPER_ADMIN",
-          };
-        }
-
         const parsed = credentialsSchema.safeParse(rawCredentials);
         if (!parsed.success) return null;
 
-        const fallbackEmail =
-          process.env.FALLBACK_ADMIN_EMAIL ?? "admin@docksideconstructions.com";
-        const fallbackPassword =
-          process.env.FALLBACK_ADMIN_PASSWORD ?? "DocksideAdmin#2026";
+        const fallbackEmail = process.env.FALLBACK_ADMIN_EMAIL;
+        const fallbackPassword = process.env.FALLBACK_ADMIN_PASSWORD;
 
         if (
           !canUseDatabase() &&
+          fallbackEmail &&
+          fallbackPassword &&
           parsed.data.email.toLowerCase() === fallbackEmail.toLowerCase() &&
           parsed.data.password === fallbackPassword
         ) {

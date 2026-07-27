@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Mail,
   MapPin,
@@ -27,6 +27,28 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const lastFocusedRef = useRef<HTMLElement | null>(null);
+  const restoreScrollOnCloseRef = useRef(true);
+
+  const closeMenu = useCallback((restoreScroll = true) => {
+    restoreScrollOnCloseRef.current = restoreScroll;
+    setOpen(false);
+  }, []);
+
+  const toggleMenu = useCallback(() => {
+    setOpen((current) => {
+      if (!current) {
+        lastFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        restoreScrollOnCloseRef.current = true;
+      } else {
+        restoreScrollOnCloseRef.current = true;
+      }
+
+      return !current;
+    });
+  }, []);
 
   useEffect(() => {
     let frame = 0;
@@ -61,17 +83,104 @@ export function SiteHeader() {
     return () => desktopQuery.removeEventListener("change", closeOnDesktop);
   }, []);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
+    if (!open) return;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousBodyOverflowY = document.body.style.overflowY;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyTop = document.body.style.top;
+    const previousBodyLeft = document.body.style.left;
+    const previousBodyRight = document.body.style.right;
+    const previousBodyWidth = document.body.style.width;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousHtmlOverflowY = document.documentElement.style.overflowY;
+    const previousOverscroll = document.body.style.overscrollBehavior;
+    const lockedScrollY = window.scrollY;
+    const focusTimer = window.setTimeout(() => menuButtonRef.current?.focus(), 0);
+    document.body.style.overflow = "hidden";
+    document.body.style.overflowY = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${lockedScrollY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+    document.documentElement.style.overflow = "hidden";
+    document.documentElement.style.overflowY = "hidden";
+    document.body.style.overscrollBehavior = "contain";
+
+    const getFocusableElements = () => {
+      const scope = headerRef.current;
+      if (!scope) return [];
+
+      return Array.from(
+        scope.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => {
+        const style = window.getComputedStyle(element);
+        return (
+          element.getAttribute("aria-hidden") !== "true" &&
+          style.display !== "none" &&
+          style.visibility !== "hidden" &&
+          (element.offsetWidth > 0 || element.offsetHeight > 0 || element === menuButtonRef.current)
+        );
+      });
     };
-  }, [open]);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeMenu();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusableElements = getFocusableElements();
+      if (!focusableElements.length) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+        return;
+      }
+
+      if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener("keydown", handleKeyDown);
+      const shouldRestoreScroll = restoreScrollOnCloseRef.current;
+      document.body.style.overflow = previousBodyOverflow;
+      document.body.style.overflowY = previousBodyOverflowY;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.top = previousBodyTop;
+      document.body.style.left = previousBodyLeft;
+      document.body.style.right = previousBodyRight;
+      document.body.style.width = previousBodyWidth;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.documentElement.style.overflowY = previousHtmlOverflowY;
+      document.body.style.overscrollBehavior = previousOverscroll;
+      if (shouldRestoreScroll) {
+        window.scrollTo(0, lockedScrollY);
+      }
+      restoreScrollOnCloseRef.current = true;
+      const returnTarget = lastFocusedRef.current;
+      if (returnTarget?.isConnected) {
+        window.requestAnimationFrame(() => returnTarget.focus());
+      }
+    };
+  }, [closeMenu, open]);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === href : !href.startsWith("/#") && (pathname === href || pathname.startsWith(`${href}/`));
@@ -83,27 +192,30 @@ export function SiteHeader() {
       const element = document.getElementById(id);
       if (element) {
         e.preventDefault();
-        // Get navbar height and add extra padding so section is not hidden behind it
-        const navbar = document.querySelector(".industrial-nav") as HTMLElement;
-        const navbarHeight = navbar ? navbar.offsetHeight : 90;
-        const offsetPadding = 0;
-        const elementTop = element.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({
-          top: elementTop - navbarHeight - offsetPadding,
-          behavior: "smooth",
-        });
-        setOpen(false);
-        window.history.pushState(null, "", href);
+        closeMenu(false);
+        window.setTimeout(() => {
+          const targetElement = document.getElementById(id);
+          if (!targetElement) return;
+
+          const navbar = document.querySelector(".industrial-nav") as HTMLElement;
+          const navbarHeight = navbar ? navbar.offsetHeight : 90;
+          const elementTop = targetElement.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({
+            top: elementTop - navbarHeight,
+            behavior: "smooth",
+          });
+          window.history.pushState(null, "", href);
+        }, 0);
         return;
       }
     }
-    setOpen(false);
+    closeMenu(false);
   };
 
   const qualitySafetyHeader = pathname === "/quality-safety";
 
   return (
-    <header className={`industrial-nav ${scrolled ? "is-scrolled" : ""} ${qualitySafetyHeader ? "quality-safety-nav" : ""}`}>
+    <header ref={headerRef} className={`industrial-nav ${scrolled ? "is-scrolled" : ""} ${open ? "is-menu-open" : ""} ${qualitySafetyHeader ? "quality-safety-nav" : ""}`}>
       <div className="industrial-nav__utility" aria-label="Dockside contact details">
         {/* Phones show this rotating strip instead of the static links below */}
         <NavContactTicker />
@@ -149,10 +261,13 @@ export function SiteHeader() {
           <Phone aria-hidden="true" />
         </a>
         <button
+          ref={menuButtonRef}
           className={`industrial-menu ${open ? "is-open" : ""}`}
           type="button"
           aria-label={open ? "Close menu" : "Open menu"}
-          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+          aria-controls="mobile-navigation"
+          onClick={toggleMenu}
         >
           <span className="industrial-menu__inner">
             <span className="hamburger-line line-1" />
@@ -162,7 +277,13 @@ export function SiteHeader() {
         </button>
       </div>
 
-      <div className={`industrial-overlay ${open ? "is-open" : ""}`} aria-hidden={!open}>
+      <div
+        id="mobile-navigation"
+        className={`industrial-overlay ${open ? "is-open" : ""}`}
+        aria-hidden={!open}
+        aria-modal={open ? "true" : undefined}
+        role="dialog"
+      >
         <div className="industrial-overlay__content">
           <div className="industrial-overlay__meta">
             <span className="industrial-overlay__subtitle">Dockside Navigation</span>
@@ -179,6 +300,7 @@ export function SiteHeader() {
                   href={href}
                   onClick={(e) => handleScroll(e, href)}
                   className={active ? "is-active" : ""}
+                  tabIndex={open ? 0 : -1}
                   style={{ transitionDelay: `${(index + 1) * 60}ms` }}
                 >
                   <span className="link-number">{String(index + 1).padStart(2, "0")}</span>
@@ -189,18 +311,9 @@ export function SiteHeader() {
           </nav>
 
           <div className="industrial-overlay__footer">
-            <div className="overlay-footer-col">
-              <h4>Direct Office</h4>
-              <a href="tel:+918825922737">+91 88259 22737</a>
-              <a href="mailto:admin@docksideconstructions.com">admin@docksideconstructions.com</a>
-            </div>
-            <div className="overlay-footer-col">
-              <h4>Headquarters</h4>
-              <address>
-                Villupuram,<br />
-                Tamil Nadu, India
-              </address>
-            </div>
+            <span>Chennai</span>
+            <a href="tel:+918925922737" tabIndex={open ? 0 : -1}>+91 89259 22737</a>
+            <a href="mailto:admin@docksideconstructions.com" tabIndex={open ? 0 : -1}>admin@docksideconstructions.com</a>
           </div>
         </div>
       </div>

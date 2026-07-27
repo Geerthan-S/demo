@@ -8,16 +8,15 @@ import { updateJobOpening, deleteJobOpening } from "@/app/admin/actions";
 
 export const metadata = { title: "Edit Job Opening | CMS" };
 
-export default async function EditJobOpeningPage({ params }: { params: { id: string } | any }) {
+export default async function EditJobOpeningPage({ params }: { params: Promise<{ id: string }> }) {
     await requireAdmin();
 
     if (!canUseDatabase()) {
         redirect("/admin/job-openings");
     }
 
-    // Next.js 15 generic param resolution
     const resolvedParams = await params;
-    const targetId = String(resolvedParams?.id || "");
+    const targetId = resolvedParams.id;
 
     const db = getPrisma();
     const job = await db.jobOpening.findUnique({

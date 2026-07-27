@@ -59,7 +59,7 @@ export function CareersFilterGrid({ jobOpenings }: CareersFilterGridProps) {
         <Briefcase className="cv2-empty-icon" aria-hidden="true" />
         <h3>No Open Positions</h3>
         <p>
-          We don't have any open positions at the moment, but we're always
+          We don&apos;t have any open positions at the moment, but we&apos;re always
           looking for talented individuals. Please check back later or send your
           resume to{" "}
           <a href="mailto:admin@docksideconstructions.com">

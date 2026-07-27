@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { updateClient } from "@/app/admin/actions";
 import { ClientForm } from "@/components/admin/client-form";
 import { requireAdmin } from "@/lib/admin";
-import { seedClients } from "@/lib/content";
+import { seedClients, type ClientView } from "@/lib/content";
 import { canUseDatabase, getPrisma, runSafeQuery } from "@/lib/prisma";
 
 export const metadata = { title: "Edit Client" };
@@ -16,9 +16,9 @@ export default async function EditClientPage({
 }) {
   await requireAdmin();
   const [{ id }, flags] = await Promise.all([params, searchParams]);
-  const client = await runSafeQuery<any>(
+  const client = await runSafeQuery<ClientView | null>(
     () => getPrisma().client.findUnique({ where: { id } }),
-    seedClients.find((item) => item.id === id),
+    seedClients.find((item) => item.id === id) ?? null,
   );
 
   if (!client) notFound();

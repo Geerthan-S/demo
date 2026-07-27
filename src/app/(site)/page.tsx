@@ -2,7 +2,7 @@ import { Hero } from "@/components/sections/Hero";
 import { Projects } from "@/components/sections/Projects";
 import { ProjectDelivery } from "@/components/home/ProjectDelivery";
 import { Services } from "@/components/sections/Services";
-import { TrustSystems, trustMetrics } from "@/components/sections/TrustSystems";
+import { TrustSystems } from "@/components/sections/TrustSystems";
 import { HeroStatsStrip } from "@/components/sections/HeroStatsStrip";
 import { TrustedByStrip } from "@/components/enterprise-proof";
 import { SiteContentSections } from "@/components/site-content-sections";
@@ -11,6 +11,13 @@ import { homeReferenceImages } from "@/lib/content";
 import { getFeaturedProjects, getSitePage } from "@/lib/repositories";
 
 export const dynamic = "force-dynamic";
+
+const trustStats = [
+  { value: 25, suffix: "+", label: "Projects Delivered" },
+  { value: 100, suffix: " CR+", label: "Project Exposure" },
+  { value: 500000, suffix: "+ M3", label: "Earthwork Executed" },
+  { value: 10, suffix: "+", label: "Major Clients" },
+];
 
 export default async function HomePage() {
   const [projects, page] = await Promise.all([
@@ -48,7 +55,7 @@ export default async function HomePage() {
           description="Dockside Constructions delivers earthworks, industrial infrastructure, road construction, site development and project management services across India with engineering precision, safety compliance and reliable execution."
           shortDescription="Engineering infrastructure built with precision, safety and reliability."
           trustBadges={["Safety Compliant", "Pan India", "Industrial Experts"]}
-          statsSlot={<HeroStatsStrip metrics={trustMetrics} />}
+          statsSlot={<HeroStatsStrip metrics={trustStats} />}
           mobileFirstLayout
 
           primaryLabel="VIEW PROJECTS"

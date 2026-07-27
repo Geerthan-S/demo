@@ -58,7 +58,7 @@ export function ContactReasons() {
   return (
     <section className="shot-contact-reasons">
       <span>Why connect with us?</span>
-      <h2>We're committed to your success</h2>
+      <h2>We&apos;re committed to your success</h2>
       <motion.div
         initial="hidden"
         whileInView="visible"

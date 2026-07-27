@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { X, MapPin, Building2, IndianRupee, Calendar, Award, ChevronLeft, ChevronRight } from "lucide-react";
@@ -40,13 +40,14 @@ export function ProjectModal({
   const [localIndex, setLocalIndex] = useState<number>(0);
 
   useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
     if (initialIndex !== null && initialIndex !== undefined) {
-      setLocalIndex(initialIndex);
+      const timeout = window.setTimeout(() => setLocalIndex(initialIndex), 0);
+      return () => window.clearTimeout(timeout);
     }
   }, [initialIndex]);
 
@@ -79,13 +80,13 @@ export function ProjectModal({
   const currentIndex = isNewPropsFlow ? localIndex : (propCurrentIndex ?? 0);
   const project = isNewPropsFlow ? resolvedProjects[currentIndex] : (propProject || resolvedProjects[currentIndex]);
 
-  const handleNavigate = (newIndex: number) => {
+  const handleNavigate = useCallback((newIndex: number) => {
     if (isNewPropsFlow) {
       setLocalIndex(newIndex);
     } else if (propOnNavigate) {
       propOnNavigate(newIndex);
     }
-  };
+  }, [isNewPropsFlow, propOnNavigate]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -101,7 +102,7 @@ export function ProjectModal({
     };
     window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
-  }, [isOpen, onClose, currentIndex, resolvedProjects.length]);
+  }, [isOpen, onClose, currentIndex, resolvedProjects.length, handleNavigate]);
 
   if (!mounted || !isOpen || !project) return null;
 

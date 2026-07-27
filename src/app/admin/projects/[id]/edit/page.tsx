@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { updateProject } from "@/app/admin/actions";
 import { ProjectForm } from "@/components/admin/project-form";
 import { canUseDatabase, getPrisma, runSafeQuery } from "@/lib/prisma";
-import { seedProjects } from "@/lib/content";
+import { seedProjects, type ProjectView } from "@/lib/content";
 import { requireAdmin } from "@/lib/admin";
 import { normalizeProject } from "@/lib/repositories";
 
@@ -17,9 +17,9 @@ export default async function EditProjectPage({
 }) {
   await requireAdmin();
   const [{ id }, flags] = await Promise.all([params, searchParams]);
-  const rawProject = await runSafeQuery<any>(
+  const rawProject = await runSafeQuery<ProjectView | null>(
     () => getPrisma().project.findUnique({ where: { id } }),
-    seedProjects.find((item) => item.id === id),
+    seedProjects.find((item) => item.id === id) ?? null,
   );
 
   if (!rawProject) notFound();

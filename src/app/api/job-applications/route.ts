@@ -1,16 +1,13 @@
+import { mkdir, writeFile } from "fs/promises";
+import { join } from "path";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { v2 as cloudinary } from "cloudinary";
+import { auth } from "@/auth";
 import { canUseDatabase, getPrisma } from "@/lib/prisma";
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+import { MAX_RESUME_BYTES, RESUME_TYPES, makeSafeUploadName } from "@/lib/server-security";
 
 const jobApplicationSchema = z.object({
-  jobOpeningId: z.string().min(1, "Job opening ID is required"),
+  jobOpeningId: z.string().trim().min(1, "Job opening ID is required"),
   name: z.string().trim().min(2, "Name must be at least 2 characters"),
   email: z.string().trim().email("Enter a valid email address"),
   phone: z.string().trim().min(6, "Phone number must be at least 6 characters"),
@@ -20,20 +17,22 @@ const jobApplicationSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     if (!canUseDatabase()) {
-      return NextResponse.json(
-        { error: "Database not available" },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: "Database not available" }, { status: 503 });
     }
 
     const formData = await request.formData();
-    const resumeFile = formData.get("resume") as File | null;
+    const resumeFile = formData.get("resume");
 
-    if (!resumeFile) {
-      return NextResponse.json(
-        { error: "Resume file is required" },
-        { status: 422 }
-      );
+    if (!(resumeFile instanceof File) || resumeFile.size === 0) {
+      return NextResponse.json({ error: "Resume file is required" }, { status: 422 });
+    }
+
+    if (resumeFile.size > MAX_RESUME_BYTES) {
+      return NextResponse.json({ error: "Resume must be less than 5MB" }, { status: 422 });
+    }
+
+    if (!RESUME_TYPES.has(resumeFile.type)) {
+      return NextResponse.json({ error: "Invalid file type. Only PDF, DOC, or DOCX allowed." }, { status: 422 });
     }
 
     const parsed = jobApplicationSchema.safeParse({
@@ -45,42 +44,33 @@ export async function POST(request: NextRequest) {
     });
 
     if (!parsed.success) {
-      const message = parsed.error.issues.map((i) => i.message).join(", ");
+      const message = parsed.error.issues.map((issue) => issue.message).join(", ");
       return NextResponse.json({ error: message }, { status: 422 });
     }
 
     const { jobOpeningId, name, email, phone, coverLetter } = parsed.data;
-
-    // Upload resume to Cloudinary
-    const arrayBuffer = await resumeFile.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64File = `data:${resumeFile.type};base64,${buffer.toString("base64")}`;
-
-    const uploadResult = await new Promise<{ secure_url: string }>((resolve, reject) => {
-      cloudinary.uploader.upload(
-        base64File,
-        {
-          folder: "dockside-cms/resumes",
-          resource_type: "auto",
-          public_id: `${jobOpeningId}-${Date.now()}-${name.replace(/\s+/g, "-")}`,
-        },
-        (error, result) => {
-          if (error) reject(error);
-          else if (result) resolve(result);
-          else reject(new Error("Upload failed"));
-        }
-      );
+    const db = getPrisma();
+    const existingApplication = await db.jobApplication.findFirst({
+      where: { email, jobOpeningId },
     });
 
-    // Save to database
-    const db = getPrisma();
+    if (existingApplication) {
+      return NextResponse.json({ error: "You have already applied for this position." }, { status: 400 });
+    }
+
+    const uploadDir = join(process.cwd(), ".data", "uploads", "resumes");
+    await mkdir(uploadDir, { recursive: true });
+    const storageName = makeSafeUploadName(resumeFile.name, resumeFile.type);
+    await writeFile(join(uploadDir, storageName), Buffer.from(await resumeFile.arrayBuffer()), { flag: "wx" });
+
     await db.jobApplication.create({
       data: {
         jobOpeningId,
         fullName: name,
         email,
         phone,
-        resumeUrl: uploadResult.secure_url,
+        resumeUrl: `private://resumes/${storageName}`,
+        resumeFilename: resumeFile.name,
         coverLetter: coverLetter || null,
         status: "New",
       },
@@ -88,28 +78,29 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { success: true, message: "Application submitted successfully" },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("[job-applications] POST error:", error);
     return NextResponse.json(
       { error: "An unexpected error occurred. Please try again." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function GET() {
   try {
-    if (!canUseDatabase()) {
-      return NextResponse.json(
-        { error: "Database not available" },
-        { status: 503 }
-      );
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const db = getPrisma();
-    const applications = await db.jobApplication.findMany({
+    if (!canUseDatabase()) {
+      return NextResponse.json({ error: "Database not available" }, { status: 503 });
+    }
+
+    const applications = await getPrisma().jobApplication.findMany({
       include: {
         jobOpening: {
           select: {
@@ -126,7 +117,7 @@ export async function GET() {
     console.error("[job-applications] GET error:", error);
     return NextResponse.json(
       { error: "Failed to fetch applications" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

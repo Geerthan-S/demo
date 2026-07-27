@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import nodemailer from "nodemailer";
-import { writeFile, mkdir } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import { join } from "path";
 import { canUseDatabase, getPrisma } from "@/lib/prisma";
+import {
+  CONTACT_ATTACHMENT_TYPES,
+  MAX_CONTACT_ATTACHMENT_BYTES,
+  escapeHtml,
+  makeSafeUploadName,
+  nl2brEscaped,
+} from "@/lib/server-security";
 
 const contactSchema = z.object({
   inquiryType: z.enum(["General", "Project", "Grievance"]),
@@ -27,10 +34,10 @@ export async function POST(request: NextRequest) {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
       phone: formData.get("phone") as string,
-      company: formData.get("company") as string || undefined,
-      grievanceCategory: formData.get("grievanceCategory") as string || undefined,
-      projectLocation: formData.get("projectLocation") as string || undefined,
-      priorityLevel: formData.get("priorityLevel") as string || undefined,
+      company: (formData.get("company") as string) || undefined,
+      grievanceCategory: (formData.get("grievanceCategory") as string) || undefined,
+      projectLocation: (formData.get("projectLocation") as string) || undefined,
+      priorityLevel: (formData.get("priorityLevel") as string) || undefined,
       preferredContactMethod: formData.get("preferredContactMethod") as string,
       message: formData.get("message") as string,
     };
@@ -38,41 +45,44 @@ export async function POST(request: NextRequest) {
     const parsed = contactSchema.safeParse(data);
 
     if (!parsed.success) {
-      const message = parsed.error.issues.map((i) => i.message).join(", ");
+      const message = parsed.error.issues.map((issue) => issue.message).join(", ");
       return NextResponse.json({ error: message }, { status: 422 });
     }
 
     const validatedData = parsed.data;
-
-    // Handle file attachments
-    const attachments = formData.getAll("attachments") as File[];
+    const attachments = formData
+      .getAll("attachments")
+      .filter((file): file is File => file instanceof File && file.size > 0);
     const attachmentPaths: string[] = [];
+    const attachmentNames: string[] = [];
 
     if (attachments.length > 0) {
-      const uploadDir = join(process.cwd(), "public", "uploads", "contact-attachments");
-
-      try {
-        await mkdir(uploadDir, { recursive: true });
-      } catch (error) {
-        // Directory might already exist
+      if (attachments.length > 3) {
+        return NextResponse.json({ error: "You can upload up to 3 attachments." }, { status: 422 });
       }
 
+      const uploadDir = join(process.cwd(), ".data", "uploads", "contact-attachments");
+      await mkdir(uploadDir, { recursive: true });
+
       for (const file of attachments) {
-        if (file.size > 0) {
-          const timestamp = Date.now();
-          const fileName = `${timestamp}-${file.name}`;
-          const filePath = join(uploadDir, fileName);
-
-          const bytes = await file.arrayBuffer();
-          const buffer = Buffer.from(bytes);
-          await writeFile(filePath, buffer);
-
-          attachmentPaths.push(`/uploads/contact-attachments/${fileName}`);
+        if (file.size > MAX_CONTACT_ATTACHMENT_BYTES) {
+          return NextResponse.json({ error: `${file.name} exceeds the 5MB attachment limit.` }, { status: 422 });
         }
+
+        if (!CONTACT_ATTACHMENT_TYPES.has(file.type)) {
+          return NextResponse.json({ error: `${file.name} must be a PDF, JPG, or PNG file.` }, { status: 422 });
+        }
+
+        const fileName = makeSafeUploadName(file.name, file.type);
+        const filePath = join(uploadDir, fileName);
+        const buffer = Buffer.from(await file.arrayBuffer());
+        await writeFile(filePath, buffer, { flag: "wx" });
+
+        attachmentPaths.push(`private://contact-attachments/${fileName}`);
+        attachmentNames.push(file.name);
       }
     }
 
-    // Save to database
     if (canUseDatabase()) {
       try {
         await getPrisma().contactMessage.create({
@@ -92,50 +102,61 @@ export async function POST(request: NextRequest) {
         });
       } catch (dbError) {
         console.error("[contact] Database save error:", dbError);
-        // Continue with email even if database save fails
       }
     }
 
-    // Format email content based on inquiry type
     const emailSubject =
       validatedData.inquiryType === "Grievance"
-        ? `🚨 Grievance: ${validatedData.grievanceCategory || "Unspecified"}`
+        ? `Grievance: ${validatedData.grievanceCategory || "Unspecified"}`
         : validatedData.inquiryType === "Project"
-          ? `📋 Project Request: ${validatedData.name}`
-          : `💬 General Inquiry: ${validatedData.name}`;
+          ? `Project Request: ${validatedData.name}`
+          : `General Inquiry: ${validatedData.name}`;
+
+    const escaped = {
+      inquiryType: escapeHtml(validatedData.inquiryType),
+      name: escapeHtml(validatedData.name),
+      email: escapeHtml(validatedData.email),
+      phone: escapeHtml(validatedData.phone),
+      company: validatedData.company ? escapeHtml(validatedData.company) : "",
+      grievanceCategory: escapeHtml(validatedData.grievanceCategory || "Not specified"),
+      priorityLevel: escapeHtml(validatedData.priorityLevel || "Not specified"),
+      preferredContactMethod: escapeHtml(validatedData.preferredContactMethod),
+      projectLocation: validatedData.projectLocation ? escapeHtml(validatedData.projectLocation) : "",
+      message: nl2brEscaped(validatedData.message),
+    };
 
     const emailHtml = `
-      <h2>New ${validatedData.inquiryType} Inquiry</h2>
+      <h2>New ${escaped.inquiryType} Inquiry</h2>
 
       <h3>Contact Information</h3>
-      <p><strong>Name:</strong> ${validatedData.name}</p>
-      <p><strong>Email:</strong> ${validatedData.email}</p>
-      <p><strong>Phone:</strong> ${validatedData.phone}</p>
-      ${validatedData.company ? `<p><strong>Company:</strong> ${validatedData.company}</p>` : ""}
-      <p><strong>Preferred Contact Method:</strong> ${validatedData.preferredContactMethod}</p>
+      <p><strong>Name:</strong> ${escaped.name}</p>
+      <p><strong>Email:</strong> ${escaped.email}</p>
+      <p><strong>Phone:</strong> ${escaped.phone}</p>
+      ${escaped.company ? `<p><strong>Company:</strong> ${escaped.company}</p>` : ""}
+      <p><strong>Preferred Contact Method:</strong> ${escaped.preferredContactMethod}</p>
 
       ${validatedData.inquiryType === "Grievance" ? `
         <h3>Grievance Details</h3>
-        <p><strong>Category:</strong> ${validatedData.grievanceCategory || "Not specified"}</p>
-        <p><strong>Priority Level:</strong> ${validatedData.priorityLevel || "Not specified"}</p>
+        <p><strong>Category:</strong> ${escaped.grievanceCategory}</p>
+        <p><strong>Priority Level:</strong> ${escaped.priorityLevel}</p>
       ` : ""}
 
       ${validatedData.inquiryType === "Project" ? `
         <h3>Project Details</h3>
-        <p><strong>Priority Level:</strong> ${validatedData.priorityLevel || "Not specified"}</p>
+        <p><strong>Priority Level:</strong> ${escaped.priorityLevel}</p>
       ` : ""}
 
-      ${validatedData.projectLocation ? `<p><strong>Project/Site Location:</strong> ${validatedData.projectLocation}</p>` : ""}
+      ${escaped.projectLocation ? `<p><strong>Project/Site Location:</strong> ${escaped.projectLocation}</p>` : ""}
 
       <h3>Message</h3>
-      <p>${validatedData.message.replace(/\n/g, "<br>")}</p>
+      <p>${escaped.message}</p>
 
-      ${attachmentPaths.length > 0 ? `
+      ${attachmentNames.length > 0 ? `
         <h3>Attachments</h3>
         <ul>
-          ${attachmentPaths.map(path => `<li>${path.split("/").pop()}</li>`).join("")}
+          ${attachmentNames.map((name) => `<li>${escapeHtml(name)}</li>`).join("")}
         </ul>
-        <p><em>Note: Attachments are saved on the server at the paths above</em></p>
+        <p><em>Note: attachments were stored in private server storage.</em></p>
       ` : ""}
 
       <hr>
@@ -144,11 +165,7 @@ export async function POST(request: NextRequest) {
       </p>
     `;
 
-    // Send email using Nodemailer
-    console.log("[contact] Attempting to send email...");
-    console.log("[contact] GMAIL_USER:", process.env.GMAIL_USER);
-    console.log("[contact] Email to:", process.env.CONTACT_EMAIL);
-    console.log("[contact] Email subject:", emailSubject);
+    console.log("[contact] Attempting to send email notification.");
 
     try {
       const transporter = nodemailer.createTransport({
@@ -166,12 +183,12 @@ export async function POST(request: NextRequest) {
         html: emailHtml,
       });
 
-      console.log("[contact] Email sent successfully! Message ID:", info.messageId);
+      console.log("[contact] Email sent successfully. Message ID:", info.messageId);
     } catch (emailError) {
       console.error("[contact] Email send error:", emailError);
       return NextResponse.json(
         { error: "Form submitted but email notification failed. We'll review your submission." },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -180,7 +197,7 @@ export async function POST(request: NextRequest) {
     console.error("[contact] POST error:", error);
     return NextResponse.json(
       { error: "An unexpected error occurred. Please try again." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

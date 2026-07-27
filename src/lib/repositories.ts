@@ -1,4 +1,4 @@
-import { Prisma, ProjectStatus } from "@prisma/client";
+import { Prisma, ProjectStatus, type Equipment } from "@prisma/client";
 import { cache } from "react";
 import { canUseDatabase, getPrisma } from "@/lib/prisma";
 import {
@@ -387,12 +387,11 @@ export const getEquipment = cache(async (): Promise<EquipmentItem[]> => {
   if (!canUseDatabase()) return seedEquipmentFallback;
 
   return withDatabaseFallback(async () => {
-    // @ts-ignore - DB model expansion is pending prisma binary restart
     const items = await getPrisma().equipment.findMany({
       where: { published: true },
       orderBy: { sortOrder: "asc" },
     });
-    return items.map((item: any) => ({
+    return items.map((item: Equipment) => ({
       id: item.id,
       name: item.name,
       slug: item.slug,

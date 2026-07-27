@@ -1,4 +1,4 @@
-import { HardHat, TrendingUp, Users, ShieldCheck, MapPin, Clock } from "lucide-react";
+import { HardHat, TrendingUp, Users, ShieldCheck, type LucideIcon } from "lucide-react";
 import { RecruitmentForm } from "./recruitment-form";
 
 export default function CareersHero() {
@@ -90,7 +90,7 @@ export default function CareersHero() {
   );
 }
 
-function FeatureItem({ icon: Icon, title, desc }: { icon: any, title: string, desc: string }) {
+function FeatureItem({ icon: Icon, title, desc }: { icon: LucideIcon; title: string; desc: string }) {
   return (
     <div className="flex items-start gap-4 group">
       <div className="w-12 h-12 rounded-full bg-white shadow-sm border border-gray-100 flex flex-shrink-0 items-center justify-center group-hover:border-[#8B3A4A]/20 transition-colors">

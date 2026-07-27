@@ -1,10 +1,15 @@
 "use client";
 
 import { CountUp } from "@/components/ui/CountUp";
-import type { HeroMetric } from "@/components/sections/HeroMetrics";
+
+type HeroStat = {
+  value: number | string;
+  suffix?: string;
+  label: string;
+};
 
 type HeroStatsStripProps = {
-  metrics: HeroMetric[];
+  metrics: HeroStat[];
 };
 
 /**

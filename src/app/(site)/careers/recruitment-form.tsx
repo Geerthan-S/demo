@@ -64,13 +64,13 @@ export function RecruitmentForm() {
     };
 
     useEffect(() => {
-        const handlePopulate = (e: any) => {
-            const { position, department } = e.detail;
+        const handlePopulate = (event: Event) => {
+            const { position, department } = (event as CustomEvent<{ position?: string; department?: string }>).detail;
             const posSelect = document.getElementById("position") as HTMLSelectElement | null;
             const deptSelect = document.getElementById("department") as HTMLSelectElement | null;
 
             if (posSelect && position) {
-                let exists = Array.from(posSelect.options).some(opt => opt.value === position);
+                const exists = Array.from(posSelect.options).some(opt => opt.value === position);
                 if (!exists) {
                     const newOpt = new Option(position, position);
                     posSelect.add(newOpt);
@@ -79,7 +79,7 @@ export function RecruitmentForm() {
             }
 
             if (deptSelect && department) {
-                let exists = Array.from(deptSelect.options).some(opt => opt.value === department);
+                const exists = Array.from(deptSelect.options).some(opt => opt.value === department);
                 if (!exists) {
                     const newOpt = new Option(department, department);
                     deptSelect.add(newOpt);
@@ -133,7 +133,7 @@ export function RecruitmentForm() {
                             id="position"
                             label="Position Applying For *"
                             value={positionType}
-                            onChange={(e: any) => setPositionType(e.target.value)}
+                            onChange={(e) => setPositionType(e.target.value)}
                         >
                             <option value="" disabled></option>
                             <option value="civil-engineer">Sr. Civil Engineer</option>
@@ -151,7 +151,7 @@ export function RecruitmentForm() {
                             id="department"
                             label="Department *"
                             value={departmentType}
-                            onChange={(e: any) => setDepartmentType(e.target.value)}
+                            onChange={(e) => setDepartmentType(e.target.value)}
                         >
                             <option value="" disabled></option>
                             <option value="engineering">Engineering</option>
@@ -174,7 +174,7 @@ export function RecruitmentForm() {
                             id="notice"
                             label="Notice Period *"
                             value={noticePeriod}
-                            onChange={(e: any) => setNoticePeriod(e.target.value)}
+                            onChange={(e) => setNoticePeriod(e.target.value)}
                         >
                             <option value="" disabled></option>
                             <option value="immediate">Immediate Joiner</option>
@@ -408,7 +408,13 @@ function FloatingInput({ id, label, type }: { id: string; label: string; type: s
 /* ──────────────────────────────────────────────────────────────────────────────
    Floating Select Helper Component
    ────────────────────────────────────────────────────────────────────────────── */
-function FloatingSelect({ id, label, children, ...props }: any) {
+type FloatingSelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
+    id: string;
+    label: string;
+    children: React.ReactNode;
+};
+
+function FloatingSelect({ id, label, children, ...props }: FloatingSelectProps) {
     return (
         <div className="relative group">
             <select

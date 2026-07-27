@@ -1,7 +1,6 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Briefcase, Calendar, CheckCircle2, Download, ExternalLink, Mail, MapPin, Phone, User, Building, Clock, Link as LinkIcon, Edit, UserPlus } from "lucide-react";
-import { Prisma } from "@prisma/client";
+import { ArrowLeft, Briefcase, Download, ExternalLink, Mail, MapPin, Phone, Clock, Link as LinkIcon, UserPlus } from "lucide-react";
 import { requireAdmin } from "@/lib/admin";
 import { getPrisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
@@ -17,14 +16,21 @@ const STATUS_OPTIONS = [
     { value: "Hired", label: "Hired", color: "bg-[#8B3A4A]/20 text-[#8B3A4A]" },
 ];
 
-export default async function ApplicationDetailPage({ params }: { params: { id: string } }) {
+function resumeHref(resumeUrl: string) {
+    const privatePrefix = "private://resumes/";
+    if (resumeUrl.startsWith(privatePrefix)) {
+        return `/api/job-applications/resumes/${encodeURIComponent(resumeUrl.slice(privatePrefix.length))}`;
+    }
+    return resumeUrl;
+}
+
+export default async function ApplicationDetailPage({ params }: { params: Promise<{ id: string }> }) {
     await requireAdmin();
+    const { id } = await params;
 
     const db = getPrisma();
-
-    // Use any bypass for TS schema lag
-    const application = await (db.jobApplication as any).findUnique({
-        where: { id: params.id },
+    const application = await db.jobApplication.findUnique({
+        where: { id },
         include: {
             jobOpening: true,
         },
@@ -95,7 +101,7 @@ export default async function ApplicationDetailPage({ params }: { params: { id: 
                     </div>
 
                     <Button asChild className="w-full h-12 bg-[#8B3A4A] hover:bg-[#6b2a37] text-white rounded-xl shadow-[0_8px_20px_rgba(139,58,74,0.2)]">
-                        <a href={application.resumeUrl} target="_blank" rel="noopener noreferrer">
+                        <a href={resumeHref(application.resumeUrl)} target="_blank" rel="noopener noreferrer">
                             <Download className="w-4 h-4 mr-2" /> Download Resume
                         </a>
                     </Button>
