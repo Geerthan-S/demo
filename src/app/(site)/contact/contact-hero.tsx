@@ -3,6 +3,7 @@
 import { Clock, Phone, ShieldCheck, MessageSquare, Handshake, Headset, MessageCircle, HardHat } from "lucide-react";
 import { Hero } from "@/components/sections/Hero";
 import { HeroMetrics, type HeroMetric } from "@/components/sections/HeroMetrics";
+import { HeroStatsStrip } from "@/components/sections/HeroStatsStrip";
 
 const contactMetrics: HeroMetric[] = [
   { icon: Clock, value: 24, suffix: "h", label: "Response Time" },
@@ -14,6 +15,8 @@ export default function ContactHero() {
   return (
     <div className="relative">
       <Hero
+          mobileFirstLayout
+          statsSlot={<HeroStatsStrip metrics={contactMetrics} />}
         eyebrow="Get In Touch"
         badgeIcon={MessageSquare}
         title="Let's Build|Your Vision|Together."

@@ -3,6 +3,7 @@
 import { Building2, Timer, BadgeCheck } from "lucide-react";
 import { Hero } from "@/components/sections/Hero";
 import { HeroMetrics, type HeroMetric } from "@/components/sections/HeroMetrics";
+import { HeroStatsStrip } from "@/components/sections/HeroStatsStrip";
 
 const projectMetrics: HeroMetric[] = [
   { icon: Building2, value: 25, suffix: "+", label: "Projects Delivered" },
@@ -98,6 +99,8 @@ export function ProjectsHero() {
 
       <div className="pj-hero-wrapper">
         <Hero
+          mobileFirstLayout
+          statsSlot={<HeroStatsStrip metrics={projectMetrics} />}
           eyebrow="Our Portfolio"
           badgeIcon={Building2}
           title="Projects That|Demonstrate|Capability."

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import Link from "next/link";
-import { ArrowRight, Check, ShieldCheck, Building2, Landmark, Pickaxe, Users } from "lucide-react";
+import { ArrowRight, HardHat, MapPin, ShieldCheck } from "lucide-react";
 import { MagneticButton } from "../ui/magnetic-button";
 
 type HeroProps = {
@@ -13,6 +13,8 @@ type HeroProps = {
   description?: string;
   /** Shown instead of `description` on phones, where the long copy goes unread. */
   shortDescription?: string;
+  /** Heading above the short description on phones. */
+  introTitle?: string;
   /** Three short proof points rendered under the CTAs on phones. */
   trustBadges?: string[];
   /** Stats block placed inside the hero flow on phones. */
@@ -46,6 +48,9 @@ const defaultHeroSlides = [
   },
 ];
 
+/** Icons for the phone trust cards, in the order the badges are passed. */
+const trustBadgeIcons = [ShieldCheck, MapPin, HardHat];
+
 const SLIDE_DURATION = 4000;
 /** Phones hold each slide longer so the hero reads as stable rather than busy. */
 const SLIDE_DURATION_MOBILE = 8000;
@@ -57,6 +62,7 @@ export function Hero({
   title = "From Land|Development|to Large-Scale|Infrastructure|Execution.",
   description = "Dockside Constructions delivers earthworks, industrial infrastructure, road construction, site development and project management services across India with engineering precision, safety compliance and reliable execution.",
   shortDescription,
+  introTitle,
   trustBadges,
   statsSlot,
   mobileFirstLayout = false,
@@ -694,7 +700,7 @@ export function Hero({
 
         @media (max-width: 767px) {
           #home-hero {
-            --hero-media: 58vh;
+            --hero-media: 74vh;
             display: block !important;
             height: auto !important;
             min-height: 0 !important;
@@ -831,119 +837,174 @@ export function Hero({
             background: rgba(255, 255, 255, 0.8) !important;
           }
 
-          /* ── decision first: CTAs directly under the photo ── */
+          /* ── Reading order below the photo:
+             primary action → who we are → proof in numbers → credentials →
+             contact. Confidence is built before the contact ask, so the two
+             CTAs stop competing. display:contents lets the two buttons be
+             ordered independently while staying one element on desktop. ── */
           #home-hero .qs-reference-hero__actions {
-            order: 2 !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 14px !important;
-            margin: 0 0 20px !important;
-            width: 100% !important;
+            display: contents !important;
           }
 
-          #home-hero .qs-reference-hero__primary {
-            width: 100% !important;
-            min-height: 52px !important;
-            justify-content: center !important;
-            border-radius: 8px !important;
-          }
-
-          #home-hero .qs-reference-hero__secondary {
-            width: auto !important;
-            min-height: 0 !important;
-            padding: 2px 0 !important;
-            justify-content: flex-start !important;
-            border-bottom: 1px solid rgba(139, 35, 50, 0.35) !important;
-            border-radius: 0 !important;
-          }
-
-          /* Magnetic wrappers must not shrink the full-width primary */
           #home-hero .qs-reference-hero__actions > * {
             width: 100% !important;
           }
 
-          #home-hero .qs-reference-hero__actions > *:last-child {
-            width: auto !important;
+          #home-hero .qs-reference-hero__actions > *:first-child {
+            order: 2 !important;
+            margin: 0 0 40px !important;
           }
 
-          /* ── three proof points ── */
-          #home-hero .hero-trust-badges {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            gap: 8px 16px !important;
+          #home-hero .qs-reference-hero__primary {
+            width: 100% !important;
+            min-height: 54px !important;
+            justify-content: center !important;
+            border-radius: 8px !important;
+            font-size: 13px !important;
+            letter-spacing: 0.14em !important;
+          }
+
+          /* Contact moves to the end of the flow, after the proof */
+          #home-hero .qs-reference-hero__actions > *:last-child {
+            order: 6 !important;
+            margin: 0 !important;
+          }
+
+          #home-hero .qs-reference-hero__secondary {
+            width: 100% !important;
+            min-height: 52px !important;
+            justify-content: center !important;
+            padding: 0 !important;
+            border: 1px solid rgba(139, 35, 50, 0.32) !important;
+            border-radius: 8px !important;
+            background: transparent !important;
+          }
+
+          /* ── company introduction ── */
+          #home-hero .hero-intro {
+            display: block !important;
             order: 3 !important;
-            margin: 0 0 22px !important;
+            margin: 0 0 44px !important;
+          }
+
+          #home-hero .hero-intro__title {
+            margin: 0 0 14px !important;
+            font-family: var(--font-display) !important;
+            font-size: clamp(25px, 7.2vw, 31px) !important;
+            font-weight: 900 !important;
+            line-height: 1.12 !important;
+            letter-spacing: -0.015em !important;
+            text-transform: uppercase !important;
+            color: #8B2332 !important;
+          }
+
+          #home-hero .hero-intro__text {
+            display: block !important;
+            margin: 0 !important;
+            max-width: 38ch !important;
+            font-size: 16px !important;
+            line-height: 1.65 !important;
+            color: #5F6067 !important;
+          }
+
+          /* ── proof in numbers, sitting on the photo ── */
+          #home-hero .hero-stats-slot {
+            display: block !important;
+            width: 100% !important;
+            margin: 22px 0 0 !important;
+          }
+
+          /* The wide floating card is replaced by the strip on phones */
+          #home-hero ~ .home-metrics-card,
+          #home-hero ~ * .home-metrics-card {
+            display: none !important;
+          }
+
+          /* Glass cards so the numbers stay readable over any slide */
+          .hero-stats-strip {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 9px !important;
+            border: 0 !important;
+            padding: 0 !important;
+          }
+
+          .hero-stats-strip__item {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            justify-content: center !important;
+            gap: 3px !important;
+            min-height: 0 !important;
+            padding: 11px 12px !important;
+            border: 1px solid rgba(255, 255, 255, 0.22) !important;
+            border-radius: 13px !important;
+            background: rgba(18, 10, 12, 0.42) !important;
+            box-shadow: none !important;
+            backdrop-filter: blur(9px) !important;
+          }
+
+          .hero-stats-strip__value {
+            min-width: 0 !important;
+            font-family: var(--font-display) !important;
+            font-size: clamp(17px, 5vw, 21px) !important;
+            font-weight: 900 !important;
+            line-height: 1.05 !important;
+            letter-spacing: -0.01em !important;
+            color: #ffffff !important;
+            overflow-wrap: break-word !important;
+          }
+
+          .hero-stats-strip__label {
+            margin-top: 0 !important;
+            font-size: 10.5px !important;
+            font-weight: 500 !important;
+            line-height: 1.3 !important;
+            text-align: left !important;
+            color: rgba(255, 255, 255, 0.88) !important;
+          }
+
+          /* ── credentials as cards, not footnotes ── */
+          #home-hero .hero-trust-badges {
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 10px !important;
+            order: 5 !important;
+            margin: 0 0 44px !important;
             padding: 0 !important;
             list-style: none !important;
           }
 
           #home-hero .hero-trust-badges li {
-            display: inline-flex !important;
+            display: flex !important;
+            flex-direction: column !important;
             align-items: center !important;
-            gap: 6px !important;
-            font-family: var(--font-mono) !important;
-            font-size: 10.5px !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.08em !important;
-            text-transform: uppercase !important;
-            color: #6A6B72 !important;
+            justify-content: flex-start !important;
+            gap: 9px !important;
+            padding: 15px 7px !important;
+            border: 1px solid rgba(139, 58, 74, 0.16) !important;
+            border-radius: 12px !important;
+            background: rgba(139, 58, 74, 0.035) !important;
+            text-align: center !important;
           }
 
-          #home-hero .hero-trust-badges svg {
-            color: #8B2332 !important;
-          }
-
-          /* ── stats ── */
-          #home-hero .hero-stats-slot {
-            display: block !important;
-            order: 4 !important;
-            margin: 0 0 20px !important;
-          }
-
-          /* The wide floating card is replaced by the strip on phones */
-          #home-hero ~ .home-metrics-card {
-            display: none !important;
-          }
-
-          .hero-stats-strip {
+          #home-hero .hero-trust-badges__icon {
             display: grid !important;
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 18px 16px !important;
-            border-top: 1px solid rgba(139, 58, 74, 0.18) !important;
-            border-bottom: 1px solid rgba(139, 58, 74, 0.18) !important;
-            padding: 18px 0 !important;
-          }
-
-          .hero-stats-strip__value {
-            font-family: var(--font-display) !important;
-            font-size: clamp(18px, 5.4vw, 23px) !important;
-            font-weight: 900 !important;
-            line-height: 1.05 !important;
+            place-items: center !important;
             color: #8B2332 !important;
-            overflow-wrap: break-word !important;
           }
 
-          .hero-stats-strip__label {
-            margin-top: 5px !important;
-            font-size: 11.5px !important;
-            font-weight: 500 !important;
-            line-height: 1.35 !important;
-            color: #6A6B72 !important;
+          #home-hero .hero-trust-badges__label {
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            line-height: 1.28 !important;
+            letter-spacing: 0.01em !important;
+            color: #4A4B52 !important;
           }
 
-          /* ── one short line, last ── */
+          /* The long desktop paragraph stays hidden on phones */
           #home-hero .qs-reference-hero__body {
             display: none !important;
-          }
-
-          #home-hero .qs-reference-hero__body-short {
-            display: block !important;
-            order: 5 !important;
-            margin: 0 !important;
-            max-width: 34ch !important;
-            font-size: 15px !important;
-            line-height: 1.6 !important;
           }
         }
 
@@ -1082,16 +1143,26 @@ export function Hero({
             </h1>
 
             <div className="hero-line qs-reference-hero__rule h-px w-16 bg-[#8B3A4A]" />
+
+            {/* Sits over the photo on phones; hidden above 768px */}
+            {statsSlot && <div className="hero-stats-slot">{statsSlot}</div>}
           </div>
 
           <p className="hero-copy qs-reference-hero__body max-w-[610px] font-medium text-[#5F6067]">
             {description}
           </p>
 
-          {shortDescription && (
-            <p className="qs-reference-hero__body-short font-medium text-[#5F6067]">
-              {shortDescription}
-            </p>
+          {/* Phone-only company introduction: gives the reader a reason to
+              trust the numbers that follow, instead of a stray closing line. */}
+          {(introTitle || shortDescription) && (
+            <div className="hero-intro">
+              {introTitle && <h2 className="hero-intro__title">{introTitle}</h2>}
+              {shortDescription && (
+                <p className="qs-reference-hero__body-short hero-intro__text font-medium text-[#5F6067]">
+                  {shortDescription}
+                </p>
+              )}
+            </div>
           )}
 
           {children && (
@@ -1121,16 +1192,23 @@ export function Hero({
 
           {trustBadges && trustBadges.length > 0 && (
             <ul className="hero-trust-badges" aria-label="Company credentials">
-              {trustBadges.map((badge) => (
-                <li key={badge}>
-                  <Check className="size-3.5" strokeWidth={3} aria-hidden="true" />
-                  {badge}
-                </li>
-              ))}
+              {trustBadges.map((badge, index) => {
+                // Icons are resolved here rather than passed in: this is a
+                // client component rendered from a server page, and component
+                // references cannot cross that boundary.
+                const BadgeIcon = trustBadgeIcons[index % trustBadgeIcons.length];
+                return (
+                  <li key={badge}>
+                    <span className="hero-trust-badges__icon">
+                      <BadgeIcon className="size-5" strokeWidth={1.9} aria-hidden="true" />
+                    </span>
+                    <span className="hero-trust-badges__label">{badge}</span>
+                  </li>
+                );
+              })}
             </ul>
           )}
 
-          {statsSlot && <div className="hero-stats-slot">{statsSlot}</div>}
         </div>
       </div>
     </section>

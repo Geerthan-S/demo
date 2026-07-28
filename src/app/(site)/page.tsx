@@ -53,8 +53,9 @@ export default async function HomePage() {
           eyebrow="INDUSTRIAL • COMMERCIAL • INFRASTRUCTURE"
           title="From Land|Development|to Large-Scale|Infrastructure|Execution."
           description="Dockside Constructions delivers earthworks, industrial infrastructure, road construction, site development and project management services across India with engineering precision, safety compliance and reliable execution."
-          shortDescription="Engineering infrastructure built with precision, safety and reliability."
-          trustBadges={["Safety Compliant", "Pan India", "Industrial Experts"]}
+          introTitle="Building India's Industrial Future"
+          shortDescription="From land development to turnkey infrastructure, we deliver projects with engineering precision, safety and uncompromising quality."
+          trustBadges={["Safety Certified", "PAN India Presence", "Industrial Experts"]}
           statsSlot={<HeroStatsStrip metrics={trustStats} />}
           mobileFirstLayout
 

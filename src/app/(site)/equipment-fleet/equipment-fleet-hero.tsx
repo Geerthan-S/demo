@@ -3,6 +3,7 @@
 import { Truck, Tractor, HardHat, ShieldCheck } from "lucide-react";
 import { Hero } from "@/components/sections/Hero";
 import { HeroMetrics, type HeroMetric } from "@/components/sections/HeroMetrics";
+import { HeroStatsStrip } from "@/components/sections/HeroStatsStrip";
 
 const fleetMetrics: HeroMetric[] = [
   { icon: Truck, value: 50, suffix: "+", label: "Tipper Trucks" },
@@ -104,6 +105,8 @@ export function EquipmentFleetHero() {
 
       <div className="ef-hero-wrapper">
         <Hero
+          mobileFirstLayout
+          statsSlot={<HeroStatsStrip metrics={fleetMetrics} />}
           eyebrow="Our Fleet"
           badgeIcon={ShieldCheck}
           title="Heavy|Equipment|Fleet."

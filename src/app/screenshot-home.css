@@ -20061,7 +20061,9 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
   }
 
   body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) #home-hero {
-    --hero-media: clamp(390px, 50vh, 440px) !important;
+    /* Tall enough that the headline plus the metric cards, which now sit on
+       the photo, always finish inside the image band. */
+    --hero-media: clamp(500px, 70vh, 640px) !important;
     display: block !important;
     height: auto !important;
     min-height: 0 !important;
@@ -21080,5 +21082,114 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
   body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .delivery-step__circle-inner {
     width: 42px !important;
     height: 42px !important;
+  }
+}
+
+/* ==========================================================================
+   MOBILE CONTENT PASS
+   Requested cleanups: drop the decorative eyebrow lines, calm the section
+   titles, and give the wordmark room now that the call button is gone.
+   ========================================================================== */
+@media (max-width: 767px) {
+  /* Call button removed from the nav — reclaim the space for the wordmark */
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-nav__call {
+    display: none !important;
+  }
+
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-wordmark__type span:first-child {
+    font-size: 17px !important;
+    line-height: 1.05 !important;
+  }
+
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-wordmark__type span:last-child {
+    font-size: 9.5px !important;
+    line-height: 1.15 !important;
+  }
+
+  /* "About Dockside" / section eyebrow labels — content starts at the heading.
+     The id selector is needed to outrank #company-introduction's own rule. */
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .cms-section__header > span {
+    display: none !important;
+  }
+
+  /* Must use the :has(#home-hero) prefix: that pseudo-class contributes an id
+     to specificity, so the existing rule outranks a :has(main.flex-1) one. */
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) #company-introduction .cms-section__header > span,
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) #company-introduction .cms-section__header > span {
+    display: none !important;
+  }
+
+  /* "Featured projects" and "Project delivery process" rules + labels */
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .project-delivery__kicker {
+    display: none !important;
+  }
+
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .project-delivery__header {
+    margin-top: 0 !important;
+  }
+
+  /* Lighter section titles */
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .project-delivery__title {
+    font-weight: 700 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  /* Project category pills centred rather than pinned left */
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects__filters,
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects__filters {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    overflow-x: visible !important;
+  }
+
+  /* The rounded eyebrow pill at the top of every non-home page. Both classes
+     are needed to outrank the shared :is(.hero-kicker, ...) rule. */
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .hero-kicker.qs-reference-hero__badge,
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .qs-reference-hero__badge {
+    display: none !important;
+  }
+
+  /* Larger section headings across the site (ref: "Our fleet capabilities") */
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) :is(
+    .fleet-capability__title,
+    .fleet-overview__title,
+    .premium-section__title,
+    .cms-section__header h2
+  ) {
+    font-size: clamp(26px, 7.6vw, 34px) !important;
+    line-height: 1.14 !important;
+    letter-spacing: -0.015em !important;
+  }
+}
+
+/* ==========================================================================
+   QUALITY KPI STRIP
+   The dark band sits on brand maroon, but the site's global heading rules
+   repaint any display type maroon — unreadable here. Force white back.
+   ========================================================================== */
+body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .qs-kpi-strip .qs-kpi-strip__value,
+.qs-kpi-strip .qs-kpi-strip__value {
+  color: #ffffff !important;
+}
+
+body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .qs-kpi-strip .qs-kpi-strip__label,
+.qs-kpi-strip .qs-kpi-strip__label {
+  color: rgba(255, 255, 255, 0.86) !important;
+}
+
+/* ==========================================================================
+   OTHER PAGE HEROES — MATCH THE HOME LAYOUT
+   Each page previously stacked a duplicate photo *below* its heading via its
+   own *-image-mobile block. The shared image-first hero now puts the photo at
+   the top with the headline over it, so those duplicates are suppressed.
+   ========================================================================== */
+@media (max-width: 767px) {
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) :is(
+    .ef-image-mobile,
+    .pj-image-mobile,
+    .dl-image-mobile,
+    .qs-image-mobile
+  ) {
+    display: none !important;
   }
 }

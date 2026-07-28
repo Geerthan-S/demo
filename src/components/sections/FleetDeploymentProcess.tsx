@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { motion, type Variants, useReducedMotion } from "framer-motion";
 import {
     ClipboardList,
@@ -9,6 +10,7 @@ import {
     MapPin,
     CheckCircle2
 } from "lucide-react";
+import { DeliveryRail } from "@/components/home/DeliveryRail";
 import { DeliveryStep } from "@/components/home/DeliveryStep";
 
 const fleetSteps = [
@@ -90,6 +92,7 @@ const pillVariants: Variants = {
 
 export function FleetDeploymentProcess() {
     const reduceMotion = useReducedMotion();
+    const stageRef = useRef<HTMLDivElement>(null);
     const initial = reduceMotion ? false : "hidden";
 
     return (
@@ -122,7 +125,8 @@ export function FleetDeploymentProcess() {
                 </motion.div>
 
                 {/* ── timeline + steps ── */}
-                <div className="project-delivery__stage" style={{ marginTop: "80px", paddingBottom: "24px" }}>
+                <div className="project-delivery__stage" ref={stageRef} style={{ marginTop: "80px", paddingBottom: "24px" }}>
+                    <DeliveryRail stageRef={stageRef} />
                     <motion.ol
                         className="project-delivery__steps"
                         aria-label="Fleet deployment steps"

@@ -40,7 +40,7 @@ export function QualityKPIStrip() {
     };
 
     return (
-        <section className="bg-[#2D1217] border-y border-[#4a1d25]">
+        <section className="qs-kpi-strip bg-[#2D1217] border-y border-[#4a1d25]">
             <motion.div
                 className="max-w-[1400px] mx-auto w-full flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-[#4a1d25]"
                 initial="hidden"
@@ -62,10 +62,10 @@ export function QualityKPIStrip() {
                             </div>
 
                             <div className="flex flex-col">
-                                <span className="font-display text-3xl md:text-[38px] font-black text-white tracking-tight leading-none mb-1">
+                                <span className="qs-kpi-strip__value font-display text-3xl md:text-[38px] font-black text-white tracking-tight leading-none mb-1">
                                     {metric.value}
                                 </span>
-                                <span className="font-mono text-[10.5px] md:text-[11px] font-bold text-[#D8C3C6] tracking-[0.12em] uppercase">
+                                <span className="qs-kpi-strip__label font-mono text-[10.5px] md:text-[11px] font-bold text-[#D8C3C6] tracking-[0.12em] uppercase">
                                     {metric.label}
                                 </span>
                             </div>

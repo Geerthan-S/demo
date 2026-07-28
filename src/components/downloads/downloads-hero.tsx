@@ -3,6 +3,7 @@
 import { FileText, Award, FileCheck, Download } from "lucide-react";
 import { Hero } from "@/components/sections/Hero";
 import { HeroMetrics, type HeroMetric } from "@/components/sections/HeroMetrics";
+import { HeroStatsStrip } from "@/components/sections/HeroStatsStrip";
 
 const downloadMetrics: HeroMetric[] = [
   { icon: FileText, value: 15, suffix: "+", label: "Documents" },
@@ -98,6 +99,8 @@ export default function DownloadsHero() {
 
       <div className="dl-hero-wrapper">
         <Hero
+          mobileFirstLayout
+          statsSlot={<HeroStatsStrip metrics={downloadMetrics} />}
           eyebrow="Download Center"
           badgeIcon={Download}
           title="Business|Credentials|& Resources."

@@ -63,7 +63,7 @@ export function FleetCapabilityOverview() {
                 {/* Section Header */}
                 <div className="flex items-center justify-center gap-6 mb-20">
                     <div className="h-[1px] w-24 bg-gradient-to-r from-transparent to-[#8A3841]/30" />
-                    <h2 className="font-display text-[15px] font-extrabold tracking-[0.15em] text-[#8A3841] uppercase m-0 leading-none">
+                    <h2 className="fleet-section-heading font-display text-[22px] md:text-[15px] font-extrabold tracking-[0.12em] md:tracking-[0.15em] text-[#8A3841] uppercase m-0 leading-tight">
                         OUR FLEET CAPABILITIES
                     </h2>
                     <div className="h-[1px] w-24 bg-gradient-to-l from-transparent to-[#8A3841]/30" />

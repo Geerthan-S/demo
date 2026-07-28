@@ -251,15 +251,6 @@ export function SiteHeader() {
             );
           })}
         </nav>
-        {/* Phone-only: construction enquiries come by call, so keep it one tap
-            away even after the utility strip scrolls out of view. */}
-        <a
-          className="industrial-nav__call"
-          href="tel:+918925922737"
-          aria-label="Call Dockside Constructions"
-        >
-          <Phone aria-hidden="true" />
-        </a>
         <button
           ref={menuButtonRef}
           className={`industrial-menu ${open ? "is-open" : ""}`}

@@ -126,7 +126,7 @@ export function Projects({ projects }: { projects: ProjectView[] }) {
               <span className="project-delivery__kicker-line w-12 h-px bg-[#8B3A4A]/20" aria-hidden="true" />
             </div>
             <RevealText>
-              <h2 className="project-delivery__title mt-4 text-[clamp(28px,3vw,44px)] font-bold uppercase leading-[1.05] tracking-tight text-[#101211]">
+              <h2 className="project-delivery__title mt-4 text-[clamp(28px,3vw,44px)] font-semibold uppercase leading-[1.05] tracking-tight text-[#101211]">
                 <span className="text-[#8B3A4A]">PROJECTS THAT DEFINE</span><br />
                 OUR CAPABILITY.
               </h2>

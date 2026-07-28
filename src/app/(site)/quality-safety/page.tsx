@@ -31,10 +31,12 @@ import {
   Sprout,
 } from "lucide-react";
 import { CertificateGrid } from "./CertificateGrid";
+import { DeliveryRail } from "@/components/home/DeliveryRail";
 import { DeliveryStep } from "@/components/home/DeliveryStep";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { Hero } from "@/components/sections/Hero";
 import { HeroMetrics, type HeroMetric } from "@/components/sections/HeroMetrics";
+import { HeroStatsStrip } from "@/components/sections/HeroStatsStrip";
 import { QualityKPIStrip } from "@/components/sections/QualityKPIStrip";
 import { ToolboxTalks } from "@/components/sections/ToolboxTalks";
 
@@ -306,6 +308,8 @@ function QualitySafetyHero() {
 
       <div className="qs-hero-wrapper">
         <Hero
+          mobileFirstLayout
+          statsSlot={<HeroStatsStrip metrics={qualityMetrics} />}
           eyebrow="Certified Excellence"
           badgeIcon={ShieldCheck}
           title="Quality &|Safety First.|Always."
@@ -351,6 +355,7 @@ function QualitySafetyHero() {
 export default function QualityAndSafetyPage() {
   const reduceMotion = useReducedMotion();
   const initial = reduceMotion ? false : "hidden";
+  const qualityStageRef = React.useRef<HTMLDivElement>(null);
 
   return (
     <div className="bg-white min-h-screen">
@@ -481,7 +486,8 @@ export default function QualityAndSafetyPage() {
           </motion.p>
 
           {/* Timeline with animated steps */}
-          <div className="project-delivery__stage">
+          <div className="project-delivery__stage" ref={qualityStageRef}>
+            <DeliveryRail stageRef={qualityStageRef} />
             <motion.ol
               className="project-delivery__steps"
               aria-label="Quality inspection process steps"
