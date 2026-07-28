@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { StandardProjectCard } from "@/components/projects/standard-project-card";
 import type { ProjectView } from "@/lib/content";
 import { getProjectCategory, projectCategoryFilters, type ProjectCategoryFilter } from "@/lib/project-categories";
 import { ProjectModal } from "@/components/projects/project-modal";
@@ -89,7 +90,7 @@ export function ProjectsFilterGrid({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="group relative mt-10 flex w-full flex-col overflow-hidden rounded-[16px] border border-[#8B3A4A]/10 bg-white shadow-[0_24px_64px_rgba(139,58,74,0.06)] lg:flex-row xl:w-[calc(100%+100px)] xl:-ml-[50px] 2xl:w-[calc(100%+140px)] 2xl:-ml-[70px]"
+            className="group relative mt-10 hidden w-full flex-col overflow-hidden rounded-[16px] md:flex border border-[#8B3A4A]/10 bg-white shadow-[0_24px_64px_rgba(139,58,74,0.06)] lg:flex-row xl:w-[calc(100%+100px)] xl:-ml-[50px] 2xl:w-[calc(100%+140px)] 2xl:-ml-[70px]"
           >
             {/* Vertical Banner */}
             <div className="hidden lg:flex w-[46px] bg-[#FAF8F8] border-r border-[#8B3A4A]/10 items-center justify-center shrink-0 z-20 relative">
@@ -236,7 +237,7 @@ export function ProjectsFilterGrid({
         )}
 
         {/* ── Compact Sub-grid (Variable Cards) ── */}
-        {gridProjects.length > 0 && (
+        {(featuredHero || gridProjects.length > 0) && (
           <motion.div
             key={`grid-${activeFilter}`}
             className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
@@ -245,55 +246,30 @@ export function ProjectsFilterGrid({
             exit="hidden"
             variants={containerVariants}
           >
-            {gridProjects.map(({ project, featured }, index) => (
+            {/* Phones show the featured project as a regular card too */}
+            {featuredHero && (
+              <motion.div
+                key={`compact-${featuredHero.project.id}`}
+                variants={projectCardVariants}
+                className="h-full md:hidden"
+              >
+                <StandardProjectCard
+                  project={featuredHero.project}
+                  featured={featuredHero.featured}
+                  onOpen={() =>
+                    setSelectedProjectIndex(projects.findIndex((p) => p.id === featuredHero.project.id))
+                  }
+                />
+              </motion.div>
+            )}
+
+            {gridProjects.map(({ project, featured }) => (
               <motion.div key={project.id} variants={projectCardVariants} className="h-full">
-                <div
-                  onClick={() => {
-                    const projectIndex = projects.findIndex((p) => p.id === project.id);
-                    setSelectedProjectIndex(projectIndex);
-                  }}
-                  className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-[12px] border border-[#8B3A4A]/10 bg-[#FDFDFD] shadow-[0_12px_32px_rgba(139,58,74,0.03)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_48px_rgba(139,58,74,0.08)]"
-                >
-                  <div className="relative h-[220px] w-full overflow-hidden">
-                    <Image
-                      src={featured.image}
-                      alt={project.title}
-                      fill
-                      className="object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-105"
-                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                    />
-                    <div className="absolute inset-0 bg-black/10 transition-opacity duration-500 group-hover:bg-transparent" />
-
-                    {/* Status Badge */}
-                    <div className="absolute top-4 left-4 z-10">
-                      <span className="flex items-center rounded bg-[#8B3A4A]/90 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-[#FDFDFD] backdrop-blur-md shadow-sm">
-                        <span className="mr-1.5 h-1 w-1 rounded-full bg-white/80" />
-                        {project.status === "COMPLETED" ? "Completed" : "In Progress"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col flex-grow p-6">
-                    <h4 className="font-display text-[16px] font-bold uppercase leading-tight text-[#101211] mb-1">
-                      {featured.client}
-                    </h4>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B3A4A]/60">
-                      {featured.type}
-                    </span>
-
-                    <div className="mt-auto pt-5">
-                      <div className="h-px w-full bg-[#8B3A4A]/10 mb-4" />
-                      <div className="flex items-center justify-between">
-                        <span className="font-display text-[15px] font-medium text-[#101211]">
-                          {featured.value}
-                        </span>
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#8B3A4A]/20 bg-white text-[#8B3A4A] transition-all group-hover:bg-[#8B3A4A] group-hover:text-white">
-                          <ArrowUpRight className="size-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <StandardProjectCard
+                  project={project}
+                  featured={featured}
+                  onOpen={() => setSelectedProjectIndex(projects.findIndex((p) => p.id === project.id))}
+                />
               </motion.div>
             ))}
           </motion.div>

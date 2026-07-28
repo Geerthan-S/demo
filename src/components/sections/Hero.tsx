@@ -824,7 +824,7 @@ export function Hero({
           }
 
           #home-hero .qs-reference-hero__title {
-            font-size: clamp(1.85rem, 8.6vw, 2.3rem) !important;
+            font-size: clamp(1.55rem, 7.3vw, 1.95rem) !important;
             line-height: 1.05 !important;
             letter-spacing: -0.01em !important;
             text-wrap: balance !important;

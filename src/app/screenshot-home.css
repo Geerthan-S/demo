@@ -20130,8 +20130,8 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
   }
 
   body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) #home-hero .qs-reference-hero__title {
-    font-size: clamp(1.64rem, 7.65vw, 2.08rem) !important;
-    line-height: 1.04 !important;
+    font-size: clamp(1.4rem, 6.4vw, 1.8rem) !important;
+    line-height: 1.06 !important;
     color: #ffffff !important;
     text-shadow: 0 2px 16px rgba(0, 0, 0, 0.36) !important;
   }
@@ -21191,5 +21191,55 @@ body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .qs-k
     .qs-image-mobile
   ) {
     display: none !important;
+  }
+}
+
+/* ==========================================================================
+   MOBILE SIZING CORRECTIONS
+   ========================================================================== */
+@media (max-width: 767px) {
+  /* Wordmark scales with the viewport so it can never clip against the menu */
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-wordmark__type span:first-child {
+    font-size: clamp(12px, 4.2vw, 17px) !important;
+  }
+
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-wordmark__type span:last-child {
+    font-size: clamp(7px, 2.4vw, 9.5px) !important;
+  }
+
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-wordmark > div:first-child {
+    width: clamp(30px, 9vw, 40px) !important;
+    height: clamp(30px, 9vw, 40px) !important;
+  }
+
+  /* Project category pills: softened corners, not full capsules */
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects__filters a,
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects__filters a {
+    border-radius: 10px !important;
+  }
+}
+
+/* The scrolled nav enlarges the wordmark (25px/19px), which overruns the menu
+   button and clips on phones. Keep the compact sizing in both states. */
+@media (max-width: 767px) {
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-nav.is-scrolled .industrial-wordmark__type span:first-child {
+    font-size: clamp(12px, 4.2vw, 17px) !important;
+  }
+
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-nav.is-scrolled .industrial-wordmark__type span:last-child {
+    font-size: clamp(7px, 2.4vw, 9.5px) !important;
+  }
+
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-nav.is-scrolled .industrial-wordmark > div:first-child {
+    width: clamp(30px, 9vw, 40px) !important;
+    height: clamp(30px, 9vw, 40px) !important;
+  }
+}
+
+/* Projects page category tabs: softened corners rather than full capsules */
+@media (max-width: 767px) {
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .shot-filter-tabs button,
+  .shot-filter-tabs button {
+    border-radius: 10px !important;
   }
 }
