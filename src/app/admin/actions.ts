@@ -454,38 +454,54 @@ export async function updateApplicationStatus(formData: FormData) {
   revalidatePath("/admin/job-applications");
 }
 
+const jobOpeningSchema = z.object({
+  title: z.string().trim().min(2, "Enter a valid job title"),
+  department: z.string().trim().min(2, "Enter a department"),
+  location: z.string().trim().min(2, "Enter a location"),
+  type: z.string().trim().min(2, "Select a job type"),
+  experience: z.string().trim().min(2, "Enter experience required"),
+  vacancies: z.coerce.number().int().min(1, "Vacancies must be at least 1"),
+  description: z.string().trim().min(10, "Description must be at least 10 characters"),
+  requirements: z.string().trim().min(10, "Requirements must be at least 10 characters"),
+  status: z.string().trim().min(2, "Select a status"),
+  published: z.boolean(),
+});
+
+function jobOpeningDataFromForm(formData: FormData, failurePath: string, isCreate: boolean = false) {
+  const title = String(formData.get("title") ?? "");
+  const baseData = parseOrRedirect(jobOpeningSchema, {
+    title,
+    department: String(formData.get("department") ?? ""),
+    location: String(formData.get("location") ?? ""),
+    type: String(formData.get("type") ?? ""),
+    experience: String(formData.get("experience") ?? ""),
+    vacancies: String(formData.get("vacancies") ?? "1"),
+    description: String(formData.get("description") ?? ""),
+    requirements: String(formData.get("requirements") ?? ""),
+    status: String(formData.get("status") ?? "Active"),
+    published: formData.get("published") === "on",
+  }, failurePath);
+
+  return {
+    ...baseData,
+    ...(isCreate ? { slug: slugify(title) } : { slug: slugify(title).replace(/(^-|-$)+/g, '') })
+  };
+}
+
 export async function createJobOpening(formData: FormData) {
   await requireAdmin();
-  const db = getPrisma();
+  if (!canUseDatabase()) redirect("/admin/job-openings?database=missing");
 
-  const title = String(formData.get("title") || "");
-  const department = String(formData.get("department") || "");
-  const location = String(formData.get("location") || "");
-  const type = String(formData.get("type") || "");
-  const experience = String(formData.get("experience") || "");
-  const vacancies = Number(formData.get("vacancies")) || 1;
-  const description = String(formData.get("description") || "");
-  const requirements = String(formData.get("requirements") || "");
-  const status = String(formData.get("status") || "Active");
-  const published = formData.get("published") === "on";
+  const data = jobOpeningDataFromForm(formData, "/admin/job-openings/new", true);
 
-  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-
-  await db.jobOpening.create({
-    data: {
-      title,
-      slug,
-      department,
-      location,
-      type,
-      experience,
-      vacancies,
-      description,
-      requirements,
-      status,
-      published,
-    },
-  });
+  try {
+    await getPrisma().jobOpening.create({ data });
+  } catch (error) {
+    if (isUniqueConstraintError(error)) {
+      redirectWithError("/admin/job-openings/new", "A job opening with this title already exists.");
+    }
+    throw error;
+  }
 
   revalidatePath("/careers");
   revalidatePath("/admin/job-openings");
@@ -494,37 +510,22 @@ export async function createJobOpening(formData: FormData) {
 
 export async function updateJobOpening(id: string, formData: FormData) {
   await requireAdmin();
-  const db = getPrisma();
+  if (!canUseDatabase()) redirect(`/admin/job-openings/${id}/edit?database=missing`);
 
-  const title = String(formData.get("title") || "");
-  const department = String(formData.get("department") || "");
-  const location = String(formData.get("location") || "");
-  const type = String(formData.get("type") || "");
-  const experience = String(formData.get("experience") || "");
-  const vacancies = Number(formData.get("vacancies")) || 1;
-  const description = String(formData.get("description") || "");
-  const requirements = String(formData.get("requirements") || "");
-  const status = String(formData.get("status") || "Active");
-  const published = formData.get("published") === "on";
+  const failurePath = `/admin/job-openings/${id}/edit`;
+  const data = jobOpeningDataFromForm(formData, failurePath, false);
 
-  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-
-  await db.jobOpening.update({
-    where: { id },
-    data: {
-      title,
-      slug,
-      department,
-      location,
-      type,
-      experience,
-      vacancies,
-      description,
-      requirements,
-      status,
-      published,
-    },
-  });
+  try {
+    await getPrisma().jobOpening.update({
+      where: { id },
+      data,
+    });
+  } catch (error) {
+    if (isUniqueConstraintError(error)) {
+      redirectWithError(failurePath, "A job opening with this title already exists.");
+    }
+    throw error;
+  }
 
   revalidatePath("/careers");
   revalidatePath("/admin/job-openings");
@@ -533,8 +534,9 @@ export async function updateJobOpening(id: string, formData: FormData) {
 
 export async function deleteJobOpening(id: string) {
   await requireAdmin();
-  const db = getPrisma();
-  await db.jobOpening.delete({ where: { id } });
+  if (!canUseDatabase()) redirect("/admin/job-openings?database=missing");
+
+  await getPrisma().jobOpening.delete({ where: { id } });
   revalidatePath("/careers");
   revalidatePath("/admin/job-openings");
 }
