@@ -8072,7 +8072,7 @@ body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .shot
 
 /* Contact page width tune: reduce side gutters and let the form/map use the viewport. */
 body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .shot-page--contact {
-  --contact-shell: min(1540px, calc(100% - clamp(32px, 4vw, 64px)));
+  --contact-shell: 100%;
 }
 
 body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .shot-page--contact .shot-subhero {
@@ -19117,6 +19117,7 @@ body:has(.qs-reference-hero) .industrial-nav.quality-safety-nav .industrial-nav_
   body:has(.qs-reference-hero) .industrial-nav.quality-safety-nav .industrial-nav__bar {
     min-height: 86px !important;
   }
+
   .delivery-step__circle {
     width: 76px !important;
     height: 76px !important;
@@ -19335,7 +19336,7 @@ body:has(.qs-reference-hero) .industrial-nav.quality-safety-nav .industrial-nav_
     overflow: hidden !important;
   }
 
-  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-wordmark > div:first-child {
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-wordmark>div:first-child {
     width: 40px !important;
     height: 40px !important;
     flex: 0 0 auto !important;
@@ -19419,7 +19420,7 @@ body:has(.qs-reference-hero) .industrial-nav.quality-safety-nav .industrial-nav_
 }
 
 @media (max-width: 767px) {
-  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-nav__utility > a {
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-nav__utility>a {
     display: none !important;
   }
 
@@ -19510,9 +19511,11 @@ body:has(.qs-reference-hero) .industrial-nav.quality-safety-nav .industrial-nav_
   .industrial-footer .industrial-footer__column {
     text-align: left !important;
   }
+
   .industrial-footer .industrial-footer__column h3 {
     text-align: left !important;
   }
+
   .industrial-footer .footer-info-row {
     justify-content: flex-start !important;
     text-align: left !important;
@@ -19757,6 +19760,7 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav .industrial-overlay,
   html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav .industrial-overlay__meta,
   html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav .industrial-overlay__links a,
@@ -19769,6 +19773,7 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
 
 /* Mobile only: remove the contact strip above the navbar. */
 @media (max-width: 767px) {
+
   html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav,
   html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) header.industrial-nav.is-scrolled,
   html body:has(.qs-reference-hero) header.industrial-nav.quality-safety-nav {
@@ -20027,6 +20032,7 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
 
 /* Homepage mobile compaction pass. Desktop remains governed by the existing layout. */
 @media (max-width: 768px) {
+
   html,
   body {
     max-width: 100% !important;
@@ -20208,7 +20214,7 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
     margin-bottom: 18px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) #company-introduction .cms-section__header > span {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) #company-introduction .cms-section__header>span {
     position: static !important;
     display: inline-flex !important;
     width: auto !important;
@@ -20216,11 +20222,11 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
     transform: none !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) #company-introduction .cms-section__header > span::before {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) #company-introduction .cms-section__header>span::before {
     width: 26px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) #company-introduction .cms-section__header > span::after {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) #company-introduction .cms-section__header>span::after {
     width: clamp(44px, 18vw, 72px) !important;
   }
 
@@ -20310,7 +20316,7 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
     border-radius: 8px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .delivers-grid > div {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .delivers-grid>div {
     opacity: 1 !important;
     transform: none !important;
     visibility: visible !important;
@@ -20349,7 +20355,7 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
     padding-bottom: 34px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects > .relative.z-10 {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects>.relative.z-10 {
     padding-inline: 16px !important;
   }
 
@@ -20377,50 +20383,50 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
     font-size: 9.5px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects > .relative.z-10 > .group {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects>.relative.z-10>.group {
     margin-top: 18px !important;
     border-radius: 10px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects > .relative.z-10 > .group > div:nth-child(2) {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects>.relative.z-10>.group>div:nth-child(2) {
     min-height: 156px !important;
     height: 156px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects > .relative.z-10 > .group > div:last-child {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects>.relative.z-10>.group>div:last-child {
     padding: 16px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects > .relative.z-10 > .group h3 {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects>.relative.z-10>.group h3 {
     margin-bottom: 14px !important;
     font-size: clamp(20px, 6.2vw, 28px) !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects > .relative.z-10 > .group p,
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects > .relative.z-10 > .group .grid.grid-cols-4 {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects>.relative.z-10>.group p,
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects>.relative.z-10>.group .grid.grid-cols-4 {
     display: none !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects > .relative.z-10 > .group .mb-6 {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects>.relative.z-10>.group .mb-6 {
     margin-bottom: 14px !important;
     padding-bottom: 14px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects > .relative.z-10 > .group .mb-6 span:first-child {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects>.relative.z-10>.group .mb-6 span:first-child {
     font-size: clamp(38px, 13vw, 48px) !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects > .relative.z-10 > .group > div:nth-child(2) .absolute.top-6 {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects>.relative.z-10>.group>div:nth-child(2) .absolute.top-6 {
     top: 12px !important;
     right: 12px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects > .relative.z-10 > .group > div:nth-child(2) .absolute.bottom-6 {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects>.relative.z-10>.group>div:nth-child(2) .absolute.bottom-6 {
     bottom: 12px !important;
     left: 12px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects > .relative.z-10 > .group button {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects>.relative.z-10>.group button {
     margin-top: 4px !important;
   }
 
@@ -20429,15 +20435,15 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
     margin-top: 16px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid > div > div {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid>div>div {
     border-radius: 9px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid > div > div > div:first-child {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid>div>div>div:first-child {
     height: 112px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid > div > div > div:last-child {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid>div>div>div:last-child {
     padding: 12px !important;
   }
 
@@ -20445,15 +20451,15 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
     font-size: 14px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid > div > div .mt-auto {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid>div>div .mt-auto {
     padding-top: 8px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid > div:last-child {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid>div:last-child {
     height: auto !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid > div:last-child > a {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid>div:last-child>a {
     flex-direction: row !important;
     justify-content: center !important;
     gap: 10px !important;
@@ -20464,17 +20470,17 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
     text-align: center !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid > div:last-child > a > div:first-child,
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid > div:last-child > a > p {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid>div:last-child>a>div:first-child,
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid>div:last-child>a>p {
     display: none !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid > div:last-child > a > h4 {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid>div:last-child>a>h4 {
     margin: 0 !important;
     font-size: 11px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid > div:last-child > a > div:last-child {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .premium-projects .mt-8.grid>div:last-child>a>div:last-child {
     width: 26px !important;
     height: 26px !important;
     flex: 0 0 26px !important;
@@ -20603,11 +20609,11 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
     padding-bottom: 20px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) section#contact > div {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) section#contact>div {
     padding-inline: 16px !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) section#contact > div > div {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) section#contact>div>div {
     gap: 16px !important;
     padding: 18px !important;
   }
@@ -20758,7 +20764,7 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
     color: #d4707c !important;
   }
 
-  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-footer__accordion summary > svg:last-child {
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-footer__accordion summary>svg:last-child {
     justify-self: end !important;
   }
 
@@ -20833,14 +20839,14 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
     height: 14px !important;
   }
 
-  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-footer__contact-col .footer-info-row > span:nth-child(2) {
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-footer__contact-col .footer-info-row>span:nth-child(2) {
     color: #d4707c !important;
     font-size: 10px !important;
     letter-spacing: 0.04em !important;
   }
 
-  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-footer__contact-col .footer-info-row > a,
-  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-footer__contact-col .footer-info-row > span:last-child {
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-footer__contact-col .footer-info-row>a,
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-footer__contact-col .footer-info-row>span:last-child {
     color: rgba(255, 255, 255, 0.86) !important;
     font-size: 10.7px !important;
     line-height: 1.28 !important;
@@ -20883,7 +20889,7 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
     transform: none !important;
   }
 
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .project-delivery__header > div {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) .project-delivery__header>div {
     opacity: 1 !important;
     transform: none !important;
     clip-path: none !important;
@@ -21091,6 +21097,7 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
    titles, and give the wordmark room now that the call button is gone.
    ========================================================================== */
 @media (max-width: 767px) {
+
   /* Call button removed from the nav — reclaim the space for the wordmark */
   body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-nav__call {
     display: none !important;
@@ -21108,14 +21115,14 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
 
   /* "About Dockside" / section eyebrow labels — content starts at the heading.
      The id selector is needed to outrank #company-introduction's own rule. */
-  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .cms-section__header > span {
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .cms-section__header>span {
     display: none !important;
   }
 
   /* Must use the :has(#home-hero) prefix: that pseudo-class contributes an id
      to specificity, so the existing rule outranks a :has(main.flex-1) one. */
-  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) #company-introduction .cms-section__header > span,
-  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) #company-introduction .cms-section__header > span {
+  body:has(#home-hero):not(:has(.admin-shell)):not(:has(.admin-login-page)) #company-introduction .cms-section__header>span,
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) #company-introduction .cms-section__header>span {
     display: none !important;
   }
 
@@ -21150,12 +21157,10 @@ html body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) 
   }
 
   /* Larger section headings across the site (ref: "Our fleet capabilities") */
-  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) :is(
-    .fleet-capability__title,
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) :is(.fleet-capability__title,
     .fleet-overview__title,
     .premium-section__title,
-    .cms-section__header h2
-  ) {
+    .cms-section__header h2) {
     font-size: clamp(26px, 7.6vw, 34px) !important;
     line-height: 1.14 !important;
     letter-spacing: -0.015em !important;
@@ -21184,12 +21189,11 @@ body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .qs-k
    the top with the headline over it, so those duplicates are suppressed.
    ========================================================================== */
 @media (max-width: 767px) {
-  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) :is(
-    .ef-image-mobile,
+
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) :is(.ef-image-mobile,
     .pj-image-mobile,
     .dl-image-mobile,
-    .qs-image-mobile
-  ) {
+    .qs-image-mobile) {
     display: none !important;
   }
 }
@@ -21198,6 +21202,7 @@ body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .qs-k
    MOBILE SIZING CORRECTIONS
    ========================================================================== */
 @media (max-width: 767px) {
+
   /* Wordmark scales with the viewport so it can never clip against the menu */
   body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-wordmark__type span:first-child {
     font-size: clamp(12px, 4.2vw, 17px) !important;
@@ -21207,7 +21212,7 @@ body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .qs-k
     font-size: clamp(7px, 2.4vw, 9.5px) !important;
   }
 
-  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-wordmark > div:first-child {
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-wordmark>div:first-child {
     width: clamp(30px, 9vw, 40px) !important;
     height: clamp(30px, 9vw, 40px) !important;
   }
@@ -21230,7 +21235,7 @@ body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .qs-k
     font-size: clamp(7px, 2.4vw, 9.5px) !important;
   }
 
-  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-nav.is-scrolled .industrial-wordmark > div:first-child {
+  body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .industrial-nav.is-scrolled .industrial-wordmark>div:first-child {
     width: clamp(30px, 9vw, 40px) !important;
     height: clamp(30px, 9vw, 40px) !important;
   }
@@ -21238,6 +21243,7 @@ body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .qs-k
 
 /* Projects page category tabs: softened corners rather than full capsules */
 @media (max-width: 767px) {
+
   body:has(main.flex-1):not(:has(.admin-shell)):not(:has(.admin-login-page)) .shot-filter-tabs button,
   .shot-filter-tabs button {
     border-radius: 10px !important;
